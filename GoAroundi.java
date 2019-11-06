@@ -44,13 +44,14 @@ public class GoAroundi implements KeyListener {
     
     public void drawEnemy() {
         Graphics g = panel.getGraphics();
-        
-        g.setColor(Color.yellow); //chink
+        g.setColor(Color.blue);
         g.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
     }
 
     public GoAroundi() {
+        
         frame.setTitle("East L.A. Lover");
+        frame.setUndecorated(true);
         frame.setBounds(0, 0, 1200, 800);
         frame.setLayout(null);
         
@@ -64,7 +65,7 @@ public class GoAroundi implements KeyListener {
         
         JPanel pane = new JPanel();
         pane.setLayout(null);
-        pane.setBackground(Color.lightGray);
+        pane.setBackground(Color.MAGENTA);
         pane.setBounds(1000, 0, 200, 800);
         frame.add(pane);
         
@@ -133,7 +134,7 @@ public class GoAroundi implements KeyListener {
                     drawMap();
                     drawCar();
                     drawCities();
-                    frame.setTitle("N/A - Fines: -$" + fines);
+                    ////frame.setTitle(enemy.brand + " - Fines: -$" + fines);
                     if(enemy.x > 500 && enemy.x < 510 && enemy.y > 0 && enemy.y < 20) {
                         int v = rand.nextInt(2);
                         if(v == 0) {
@@ -422,6 +423,11 @@ public class GoAroundi implements KeyListener {
         
         g.setFont(new Font("Curlz MT", Font.ITALIC, 50));
         
+        g.drawString("City of", 200, 200-40);
+        g.drawString("City of", 600, 200-40);
+        g.drawString("City of", 600, 600-40);
+        g.drawString("City of", 200, 600-40);
+
         g.drawString("L.A.", 200, 200);
         g.drawString("EAST L.A.", 600, 200);
         g.drawString("PICO RIVERA", 600, 600);
@@ -546,7 +552,7 @@ public class GoAroundi implements KeyListener {
         
         Graphics g = panel.getGraphics();
         
-        g.setColor(new Color(0, 210, 0));
+        g.setColor(new Color(240, 201, 201));
         
         g.fillRect(0, 0, 1000, 800);
 
