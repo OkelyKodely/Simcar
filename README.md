@@ -1,2 +1,0 @@
-# PoliceChase
-pure java, game
