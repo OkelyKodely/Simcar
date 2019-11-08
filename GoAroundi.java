@@ -6,7 +6,7 @@ import java.util.Random;
 import java.util.Vector;
 import javax.swing.*;
 
-public class GoAroundi implements KeyListener {
+public class GoAroundi implements Runnable, KeyListener {
 
     private Car car = new Car();
     private Car enemy = new Car();
@@ -43,9 +43,11 @@ public class GoAroundi implements KeyListener {
     }
     
     public void drawEnemy() {
+        try {
         Graphics g = panel.getGraphics();
         g.setColor(Color.blue);
         g.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+        } catch(Exception e) {}
     }
 
     public GoAroundi() {
@@ -72,6 +74,8 @@ public class GoAroundi implements KeyListener {
         JTextArea crashList = new JTextArea();
         
         crashList.setForeground(Color.CYAN);
+        JScrollPane sp = new JScrollPane(crashList);
+        sp.setBounds(10, 10, 165, 380);
                 
         crashList.setBounds(10, 10, 165, 380);
         crashList.addMouseListener(new MouseListener() {
@@ -96,10 +100,10 @@ public class GoAroundi implements KeyListener {
             public void mouseExited(MouseEvent e) {
             }
         });
-        pane.add(crashList);
+        pane.add(sp);
         
         JButton totalExit = new JButton();
-        totalExit.setBounds(0, 520, 200, 100);
+        totalExit.setBounds(20, 520, 130, 40);
         pane.add(totalExit);
         totalExit.setText("Total Exit");
         totalExit.addActionListener(new ActionListener() {
@@ -111,7 +115,7 @@ public class GoAroundi implements KeyListener {
         });
 
         JButton copyToClipboard = new JButton();
-        copyToClipboard.setBounds(0, 410, 200, 100);
+        copyToClipboard.setBounds(20, 480, 170, 35);
         pane.add(copyToClipboard);
         copyToClipboard.setText("Copy to clipboard");
         copyToClipboard.addActionListener(new ActionListener() {
@@ -151,7 +155,7 @@ public class GoAroundi implements KeyListener {
                             enemy.width = 10;
                             enemy.height = 20;
                         }
-                    } else if(enemy.x > 960 && enemy.x < 980 && enemy.y > 0 && enemy.y < 20) {
+                    } else if(enemy.x > 970 && enemy.x < 990 && enemy.y > 0 && enemy.y < 20) {
                         int v = rand.nextInt(2);
                         if(v == 0) {
                             if(enemy.direction.equals("right"))
@@ -167,7 +171,7 @@ public class GoAroundi implements KeyListener {
                             enemy.width = 10;
                             enemy.height = 20;
                         }
-                    } else if(enemy.x > 950 && enemy.x < 980 && enemy.y > 400 && enemy.y < 420) {
+                    } else if(enemy.x > 970 && enemy.x < 990 && enemy.y > 400 && enemy.y < 420) {
                         int v = rand.nextInt(2);
                         if(v == 0) {
                             if(enemy.direction.equals("up"))
@@ -183,7 +187,7 @@ public class GoAroundi implements KeyListener {
                             enemy.width = 20;
                             enemy.height = 10;
                         }
-                    } else if(enemy.x > 950 && enemy.x < 980 && enemy.y > 760 && enemy.y < 780) {
+                    } else if(enemy.x > 970 && enemy.x < 990 && enemy.y > 760 && enemy.y < 780) {
                         int v = rand.nextInt(2);
                         if(v == 0) {
                             if(enemy.direction.equals("up"))
@@ -204,37 +208,49 @@ public class GoAroundi implements KeyListener {
                         if(v == 0 || v == 2 || v == 1) {
                             if(enemy.direction.equals("up")) {
                                 enemy.direction = "up";
-                            enemy.width = 10;
-                            enemy.height = 20;
-                                if(v == 2)
+                                enemy.width = 10;
+                                enemy.height = 20;
+                                if(v == 2) {
                                     enemy.direction = "left";
-                                else
+                                    enemy.width = 20;
+                                    enemy.height = 10;
+                                }
+                                else {
                                     enemy.direction = "right";
-                            enemy.width = 20;
-                            enemy.height = 10;
+                                    enemy.width = 20;
+                                    enemy.height = 10;
+                                }
                             }
                             else if(enemy.direction.equals("down")) {
                                 enemy.direction = "down";
-                            enemy.width = 10;
-                            enemy.height = 20;
-                                if(v == 2)
+                                enemy.width = 10;
+                                enemy.height = 20;
+                                if(v == 2) {
                                     enemy.direction = "right";
-                                else
+                                    enemy.width = 20;
+                                    enemy.height = 10;
+                                }
+                                else {
                                     enemy.direction = "left";
-                            enemy.width = 20;
-                            enemy.height = 10;
+                                    enemy.width = 20;
+                                    enemy.height = 10;
+                                }
                             }
                             else if(enemy.direction.equals("left")) {
                                 enemy.direction = "left";
-                            enemy.width = 20;
-                            enemy.height = 10;
-                                if(v == 2)
+                                enemy.width = 20;
+                                enemy.height = 10;
+                                if(v == 2) {
                                     enemy.direction = "down";
-                                else
+                                    enemy.width = 10;
+                                    enemy.height = 20;
+                                }
+                                else {
                                     enemy.direction = "up";
+                                    enemy.width = 10;
+                                    enemy.height = 20;
+                                }
                             }
-                            enemy.width = 10;
-                            enemy.height = 20;
                         }
                     } else if(enemy.x > 500 && enemy.x < 510 && enemy.y > 0 && enemy.y < 20) {
                         int v = rand.nextInt(2);
@@ -256,12 +272,17 @@ public class GoAroundi implements KeyListener {
                     if(enemyIsCollided()) {
 
                         String cl = crashList.getText();
-                        if(cl.equals("") || cl == null) {
-                            crashList.setText(cl + System.getProperty("line.separator") + enemy.brand 
+                        
+                        if(cl.equals("") || cl == null)
+                        {
+                            crashList.setText(enemy.brand 
                                     + " (-$" + enemy.fine + ")");
-                        } else if(!cl.equals("")) {
-                            crashList.setText(System.getProperty("line.separator") + cl 
-                                    + System.getProperty("line.separator") + enemy.brand + " (-$" + enemy.fine + ")");
+                        }
+                        else if(!cl.equals(""))
+                        {
+                            crashList.setText(cl 
+                                    + System.getProperty("line.separator")
+                                    + enemy.brand + " (-$" + enemy.fine + ")");
                         }
 
                         int u = rand.nextInt(4);
@@ -293,17 +314,17 @@ public class GoAroundi implements KeyListener {
                         createEnemyAutomobile();
 
                     if(enemy.direction.equals("right"))
-                        enemy.x += 5;
+                        enemy.x += 2;
                     if(enemy.direction.equals("left"))
-                        enemy.x -= 5;
+                        enemy.x -= 2;
                     if(enemy.direction.equals("down"))
-                        enemy.y += 5;
+                        enemy.y += 2;
                     if(enemy.direction.equals("up"))
-                        enemy.y -= 5;
+                        enemy.y -= 2;
 
                     drawEnemy();
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(20);
                     } catch (InterruptedException interruptedException) {
                     }
                 }
@@ -317,16 +338,16 @@ public class GoAroundi implements KeyListener {
 
     public void createEnemyAutomobile() {
         int u = rand.nextInt(4);
-        if( u == 0) {
+        if( u == 0 ) {
             enemy.brand = "Mercedez";
         }
-        if( u == 1) {
+        if( u == 1 ) {
             enemy.brand = "Tatoyo";
         }
-        if( u == 2) {
+        if( u == 2 ) {
             enemy.brand = "Jeep";
         }
-        if( u == 3) {
+        if( u == 3 ) {
             enemy.brand = "Chrysler";
         }
         int v = rand.nextInt(12);
@@ -417,6 +438,7 @@ public class GoAroundi implements KeyListener {
     }
     
     public void drawCities() {
+        try {
         Graphics g = panel.getGraphics();
         
         g.setColor(Color.WHITE);
@@ -432,7 +454,7 @@ public class GoAroundi implements KeyListener {
         g.drawString("EAST L.A.", 600, 200);
         g.drawString("PICO RIVERA", 600, 600);
         g.drawString("CAMPTON", 200, 600);
-                
+        } catch(Exception e) {frame.dispose();}   
     }
 
     public boolean enemyIsCollided() {
@@ -494,10 +516,11 @@ public class GoAroundi implements KeyListener {
     }
     
     public void drawCar() {
+        try {
         Graphics g = panel.getGraphics();
-        
         g.setColor(car.color);
         g.fillRect(car.x, car.y, car.width, car.height);
+        } catch(Exception e) {frame.dispose();}
     }
     
     class Car {
@@ -522,28 +545,28 @@ public class GoAroundi implements KeyListener {
         void moveDown() {
             width = 10;
             height = 20;
-            y+=2;
+            y+=5;
             direction = "down";
         }
 
         void moveUp() {
             width = 10;
             height = 20;
-            y-=2;
+            y-=5;
             direction = "up";
         }
 
         void moveRight() {
             width = 20;
             height = 10;
-            x+=2;
+            x+=5;
             direction = "right";
         }
 
         void moveLeft() {
             width = 20;
             height = 10;
-            x-=2;
+            x-=5;
             direction = "left";
         }
     }
@@ -552,6 +575,7 @@ public class GoAroundi implements KeyListener {
         
         Graphics g = panel.getGraphics();
         
+        try {
         g.setColor(new Color(240, 201, 201));
         
         g.fillRect(0, 0, 1000, 800);
@@ -581,9 +605,17 @@ public class GoAroundi implements KeyListener {
             g.drawRect(970, 2*i, 1, 5);
         
         g.dispose();
+        } catch(Exception e) {frame.dispose();}
+    }
+ 
+    public void run() {
+        GoAroundi goAroundi = new GoAroundi();
+        goAroundi.frame.dispose();
     }
     
     public static void main(String args[]) {
-        GoAroundi goAroundi = new GoAroundi();
+        
+        Thread t = new Thread(new GoAroundi());
+        t.start();
     }
 }
