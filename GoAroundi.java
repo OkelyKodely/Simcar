@@ -2,20 +2,39 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Random;
 import java.util.Vector;
+import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
 import javax.swing.*;
 
 public class GoAroundi implements Runnable, KeyListener {
 
+    private Map map = new Map();
+    private Airplane airplane_L = new Airplane();
+    private Airplane airplane_R = new Airplane();
+    private Airplane airplane_T = new Airplane();
+    private Airplane airplane_D = new Airplane();
     private Car car = new Car();
     private Car enemy = new Car();
+    private Car enemy2 = new Car();
     private JFrame frame = new JFrame();
     private JPanel panel = new JPanel();
     private Random rand = new Random();
     private int fines = 0;
     private String brandOfCrashCar = "N/A";
     private Vector<String> carCrashes = new Vector<String>();
+    private Image airplaneL;
+    private Image airplaneR;
+    private Image airplaneT;
+    private Image airplaneD;
+    private String which = "L";
     
     @Override
     public void keyPressed(KeyEvent e) {
@@ -31,6 +50,13 @@ public class GoAroundi implements Runnable, KeyListener {
             car.moveDown();
         drawEnemy();
         drawCar();
+//        try {
+//            makeSound("tick.wav");
+//        } catch(Exception e1) {
+//            try {
+//                makeSound("src/tick.wav");
+//            } catch(Exception e2) {}
+//        }
     }
 
     @Override
@@ -47,15 +73,46 @@ public class GoAroundi implements Runnable, KeyListener {
         Graphics g = panel.getGraphics();
         g.setColor(Color.blue);
         g.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+        g.dispose();
+        } catch(Exception e) {}
+    }
+    
+    public void drawEnemy2() {
+        try {
+        Graphics g = panel.getGraphics();
+        g.setColor(Color.blue);
+        g.fillRect(enemy2.x, enemy2.y, enemy2.width, enemy2.height);
+        g.dispose();
         } catch(Exception e) {}
     }
 
+    class Airplane {
+        int x = -1000, y;
+        String direction = "T";
+    }
+    
     public GoAroundi() {
+        
+        try {
+            airplaneR = ImageIO.read(ClassLoader.getSystemResourceAsStream("airplaneL.png"));
+            airplaneL = ImageIO.read(ClassLoader.getSystemResourceAsStream("airplaneR.png"));
+            airplaneD = ImageIO.read(ClassLoader.getSystemResourceAsStream("airplaneT.png"));
+            airplaneT = ImageIO.read(ClassLoader.getSystemResourceAsStream("airplaneD.png"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         
         frame.setTitle("East L.A. Lover");
         frame.setUndecorated(true);
         frame.setBounds(0, 0, 1200, 800);
         frame.setLayout(null);
+        
+        try {
+            BufferedImage ii = ImageIO.read(ClassLoader.getSystemResourceAsStream("usedcars.jpg"));
+            frame.setContentPane(new JLabel(new ImageIcon(ii)));
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
         
         panel.setBounds(0, 0, 1000, 800);
         panel.setLayout(null);
@@ -64,20 +121,16 @@ public class GoAroundi implements Runnable, KeyListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         enemy.x = -125;
-        
-        JPanel pane = new JPanel();
-        pane.setLayout(null);
-        pane.setBackground(Color.MAGENTA);
-        pane.setBounds(1000, 0, 200, 800);
-        frame.add(pane);
+
+        enemy2.x = -125;
         
         JTextArea crashList = new JTextArea();
         
         crashList.setForeground(Color.CYAN);
         JScrollPane sp = new JScrollPane(crashList);
-        sp.setBounds(10, 10, 165, 380);
+        sp.setBounds(1070, 10, 125, 380);
                 
-        crashList.setBounds(10, 10, 165, 380);
+        crashList.setBounds(1070, 10, 125, 380);
         crashList.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -100,11 +153,11 @@ public class GoAroundi implements Runnable, KeyListener {
             public void mouseExited(MouseEvent e) {
             }
         });
-        pane.add(sp);
+        frame.add(sp);
         
         JButton totalExit = new JButton();
-        totalExit.setBounds(20, 520, 130, 40);
-        pane.add(totalExit);
+        totalExit.setBounds(1050, 520, 150, 40);
+        frame.add(totalExit);
         totalExit.setText("Total Exit");
         totalExit.addActionListener(new ActionListener() {
             @Override
@@ -115,8 +168,8 @@ public class GoAroundi implements Runnable, KeyListener {
         });
 
         JButton copyToClipboard = new JButton();
-        copyToClipboard.setBounds(20, 480, 170, 35);
-        pane.add(copyToClipboard);
+        copyToClipboard.setBounds(1050, 480, 150, 40);
+        frame.add(copyToClipboard);
         copyToClipboard.setText("Copy to clipboard");
         copyToClipboard.addActionListener(new ActionListener() {
             @Override
@@ -128,6 +181,12 @@ public class GoAroundi implements Runnable, KeyListener {
             }
         });
         
+        JLabel j = new JLabel("Simcar");
+        j.setBounds(1070, 620, 200, 30);
+        j.setFont(new Font("arial", Font.BOLD, 30));
+        j.setForeground(Color.red);
+        frame.add(j);
+        
         frame.setVisible(true);
         
         frame.requestFocus();
@@ -135,11 +194,157 @@ public class GoAroundi implements Runnable, KeyListener {
         Thread t = new Thread() {
             public void run() {
                 while(true) {
+                    
                     drawMap();
                     drawCar();
                     drawCities();
-                    ////frame.setTitle(enemy.brand + " - Fines: -$" + fines);
+                    drawAirplanes();
+
                     if(enemy.x > 500 && enemy.x < 510 && enemy.y > 0 && enemy.y < 20) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy.direction.equals("right"))
+                                enemy.direction = "right";
+                            if(enemy.direction.equals("left"))
+                                enemy.direction = "left";
+                        }
+                        else {
+                            if(enemy.direction.equals("right"))
+                                enemy.direction = "down";
+                            if(enemy.direction.equals("left"))
+                                enemy.direction = "down";
+                            enemy.width = 10;
+                            enemy.height = 20;
+                        }
+                    } else if(enemy.x > 250 && enemy.x < 260 && enemy.y > 0 && enemy.y < 20) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy.direction.equals("right"))
+                                enemy.direction = "right";
+                            if(enemy.direction.equals("left"))
+                                enemy.direction = "left";
+                        }
+                        else {
+                            if(enemy.direction.equals("right"))
+                                enemy.direction = "down";
+                            if(enemy.direction.equals("left"))
+                                enemy.direction = "down";
+                            enemy.width = 10;
+                            enemy.height = 20;
+                        }
+                    } else if(enemy.x > 250 && enemy.x < 260 && enemy.y > 240 && enemy.y < 260) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy.direction.equals("right"))
+                                enemy.direction = "right";
+                            if(enemy.direction.equals("left"))
+                                enemy.direction = "left";
+                        }
+                        else {
+                            int x = rand.nextInt(2);
+                            if(x == 0) {
+                                if(enemy.direction.equals("right"))
+                                    enemy.direction = "up";
+                                if(enemy.direction.equals("left"))
+                                    enemy.direction = "up";
+                            } else {
+                                if(enemy.direction.equals("right"))
+                                    enemy.direction = "down";
+                                if(enemy.direction.equals("left"))
+                                    enemy.direction = "down";
+                            }
+                            enemy.width = 10;
+                            enemy.height = 20;
+                        }
+                    } else if(enemy.x > 490 && enemy.x < 510 && enemy.y > 240 && enemy.y < 260) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy.direction.equals("right"))
+                                enemy.direction = "right";
+                            if(enemy.direction.equals("left"))
+                                enemy.direction = "left";
+                        }
+                        else {
+                            int x = rand.nextInt(2);
+                            if(x == 0) {
+                                if(enemy.direction.equals("right"))
+                                    enemy.direction = "up";
+                                if(enemy.direction.equals("left"))
+                                    enemy.direction = "up";
+                            } else {
+                                if(enemy.direction.equals("right"))
+                                    enemy.direction = "down";
+                                if(enemy.direction.equals("left"))
+                                    enemy.direction = "down";
+                            }
+                            enemy.width = 10;
+                            enemy.height = 20;
+                        }
+                    } else if(enemy.x > 0 && enemy.x < 10 && enemy.y > 200 && enemy.y < 220) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy.direction.equals("down"))
+                                enemy.direction = "down";
+                            if(enemy.direction.equals("up"))
+                                enemy.direction = "up";
+                        }
+                        else {
+                            if(enemy.direction.equals("down"))
+                                enemy.direction = "right";
+                            if(enemy.direction.equals("up"))
+                                enemy.direction = "right";
+                            enemy.width = 20;
+                            enemy.height = 10;
+                        }
+                    } else if(enemy.x > 0 && enemy.x < 10 && enemy.y > 400 && enemy.y < 420) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy.direction.equals("down"))
+                                enemy.direction = "down";
+                            if(enemy.direction.equals("up"))
+                                enemy.direction = "up";
+                        }
+                        else {
+                            if(enemy.direction.equals("down"))
+                                enemy.direction = "right";
+                            if(enemy.direction.equals("up"))
+                                enemy.direction = "right";
+                            enemy.width = 20;
+                            enemy.height = 10;
+                        }
+                    } else if(enemy.x > 0 && enemy.x < 10 && enemy.y > 600 && enemy.y < 620) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy.direction.equals("down"))
+                                enemy.direction = "down";
+                            if(enemy.direction.equals("up"))
+                                enemy.direction = "up";
+                        }
+                        else {
+                            if(enemy.direction.equals("down"))
+                                enemy.direction = "right";
+                            if(enemy.direction.equals("up"))
+                                enemy.direction = "right";
+                            enemy.width = 20;
+                            enemy.height = 10;
+                        }
+                    } else if(enemy.x > 0 && enemy.x < 10 && enemy.y > 750 && enemy.y < 770) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy.direction.equals("down"))
+                                enemy.direction = "down";
+                            if(enemy.direction.equals("up"))
+                                enemy.direction = "up";
+                        }
+                        else {
+                            if(enemy.direction.equals("down"))
+                                enemy.direction = "right";
+                            if(enemy.direction.equals("up"))
+                                enemy.direction = "right";
+                            enemy.width = 20;
+                            enemy.height = 10;
+                        }
+                    } else if(enemy.x > 750 && enemy.x < 760 && enemy.y > 0 && enemy.y < 20) {
                         int v = rand.nextInt(2);
                         if(v == 0) {
                             if(enemy.direction.equals("right"))
@@ -171,7 +376,39 @@ public class GoAroundi implements Runnable, KeyListener {
                             enemy.width = 10;
                             enemy.height = 20;
                         }
+                    } else if(enemy.x > 970 && enemy.x < 990 && enemy.y > 200 && enemy.y < 220) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy.direction.equals("right"))
+                                enemy.direction = "right";
+                            if(enemy.direction.equals("left"))
+                                enemy.direction = "left";
+                        }
+                        else {
+                            if(enemy.direction.equals("right"))
+                                enemy.direction = "down";
+                            if(enemy.direction.equals("left"))
+                                enemy.direction = "down";
+                            enemy.width = 10;
+                            enemy.height = 20;
+                        }
                     } else if(enemy.x > 970 && enemy.x < 990 && enemy.y > 400 && enemy.y < 420) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy.direction.equals("up"))
+                                enemy.direction = "up";
+                            if(enemy.direction.equals("down"))
+                                enemy.direction = "down";
+                        }
+                        else {
+                            if(enemy.direction.equals("up"))
+                                enemy.direction = "left";
+                            if(enemy.direction.equals("down"))
+                                enemy.direction = "left";
+                            enemy.width = 20;
+                            enemy.height = 10;
+                        }
+                    } else if(enemy.x > 970 && enemy.x < 990 && enemy.y > 600 && enemy.y < 620) {
                         int v = rand.nextInt(2);
                         if(v == 0) {
                             if(enemy.direction.equals("up"))
@@ -269,20 +506,342 @@ public class GoAroundi implements Runnable, KeyListener {
                             enemy.height = 10;
                         }
                     }
-                    if(enemyIsCollided()) {
+                    if(enemy2.x > 500 && enemy2.x < 510 && enemy2.y > 0 && enemy2.y < 20) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("right"))
+                                enemy2.direction = "right";
+                            if(enemy2.direction.equals("left"))
+                                enemy2.direction = "left";
+                        }
+                        else {
+                            if(enemy2.direction.equals("right"))
+                                enemy2.direction = "down";
+                            if(enemy2.direction.equals("left"))
+                                enemy2.direction = "down";
+                            enemy2.width = 10;
+                            enemy2.height = 20;
+                        }
+                    } else if(enemy2.x > 250 && enemy2.x < 260 && enemy2.y > 0 && enemy2.y < 20) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("right"))
+                                enemy2.direction = "right";
+                            if(enemy2.direction.equals("left"))
+                                enemy2.direction = "left";
+                        }
+                        else {
+                            if(enemy2.direction.equals("right"))
+                                enemy2.direction = "down";
+                            if(enemy2.direction.equals("left"))
+                                enemy2.direction = "down";
+                            enemy2.width = 10;
+                            enemy2.height = 20;
+                        }
+                    } else if(enemy2.x > 250 && enemy2.x < 260 && enemy2.y > 240 && enemy2.y < 260) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("right"))
+                                enemy2.direction = "right";
+                            if(enemy2.direction.equals("left"))
+                                enemy2.direction = "left";
+                        }
+                        else {
+                            int x = rand.nextInt(2);
+                            if(x == 0) {
+                                if(enemy2.direction.equals("right"))
+                                    enemy2.direction = "up";
+                                if(enemy2.direction.equals("left"))
+                                    enemy2.direction = "up";
+                            } else {
+                                if(enemy2.direction.equals("right"))
+                                    enemy2.direction = "down";
+                                if(enemy2.direction.equals("left"))
+                                    enemy2.direction = "down";
+                            }
+                            enemy2.width = 10;
+                            enemy2.height = 20;
+                        }
+                    } else if(enemy2.x > 490 && enemy2.x < 510 && enemy2.y > 240 && enemy2.y < 260) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("right"))
+                                enemy2.direction = "right";
+                            if(enemy2.direction.equals("left"))
+                                enemy2.direction = "left";
+                        }
+                        else {
+                            int x = rand.nextInt(2);
+                            if(x == 0) {
+                                if(enemy2.direction.equals("right"))
+                                    enemy2.direction = "up";
+                                if(enemy2.direction.equals("left"))
+                                    enemy2.direction = "up";
+                            } else {
+                                if(enemy2.direction.equals("right"))
+                                    enemy2.direction = "down";
+                                if(enemy2.direction.equals("left"))
+                                    enemy2.direction = "down";
+                            }
+                            enemy2.width = 10;
+                            enemy2.height = 20;
+                        }
+                    } else if(enemy2.x > 0 && enemy2.x < 10 && enemy2.y > 200 && enemy2.y < 220) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "down";
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "up";
+                        }
+                        else {
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "right";
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "right";
+                            enemy2.width = 20;
+                            enemy2.height = 10;
+                        }
+                    } else if(enemy2.x > 0 && enemy2.x < 10 && enemy2.y > 400 && enemy2.y < 420) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "down";
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "up";
+                        }
+                        else {
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "right";
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "right";
+                            enemy2.width = 20;
+                            enemy2.height = 10;
+                        }
+                    } else if(enemy2.x > 0 && enemy2.x < 10 && enemy2.y > 600 && enemy2.y < 620) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "down";
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "up";
+                        }
+                        else {
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "right";
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "right";
+                            enemy2.width = 20;
+                            enemy2.height = 10;
+                        }
+                    } else if(enemy2.x > 0 && enemy2.x < 10 && enemy2.y > 750 && enemy2.y < 770) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "down";
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "up";
+                        }
+                        else {
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "right";
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "right";
+                            enemy2.width = 20;
+                            enemy2.height = 10;
+                        }
+                    } else if(enemy2.x > 750 && enemy2.x < 760 && enemy2.y > 0 && enemy2.y < 20) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("right"))
+                                enemy2.direction = "right";
+                            if(enemy2.direction.equals("left"))
+                                enemy2.direction = "left";
+                        }
+                        else {
+                            if(enemy2.direction.equals("right"))
+                                enemy2.direction = "down";
+                            if(enemy2.direction.equals("left"))
+                                enemy2.direction = "down";
+                            enemy2.width = 10;
+                            enemy2.height = 20;
+                        }
+                    } else if(enemy2.x > 970 && enemy2.x < 990 && enemy2.y > 0 && enemy2.y < 20) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("right"))
+                                enemy2.direction = "right";
+                            if(enemy2.direction.equals("left"))
+                                enemy2.direction = "left";
+                        }
+                        else {
+                            if(enemy2.direction.equals("right"))
+                                enemy2.direction = "down";
+                            if(enemy2.direction.equals("left"))
+                                enemy2.direction = "down";
+                            enemy2.width = 10;
+                            enemy2.height = 20;
+                        }
+                    } else if(enemy2.x > 970 && enemy2.x < 990 && enemy2.y > 200 && enemy2.y < 220) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("right"))
+                                enemy2.direction = "right";
+                            if(enemy2.direction.equals("left"))
+                                enemy2.direction = "left";
+                        }
+                        else {
+                            if(enemy2.direction.equals("right"))
+                                enemy2.direction = "down";
+                            if(enemy2.direction.equals("left"))
+                                enemy2.direction = "down";
+                            enemy2.width = 10;
+                            enemy2.height = 20;
+                        }
+                    } else if(enemy2.x > 970 && enemy2.x < 990 && enemy2.y > 400 && enemy2.y < 420) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "up";
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "down";
+                        }
+                        else {
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "left";
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "left";
+                            enemy2.width = 20;
+                            enemy2.height = 10;
+                        }
+                    } else if(enemy2.x > 970 && enemy2.x < 990 && enemy2.y > 600 && enemy2.y < 620) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "up";
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "down";
+                        }
+                        else {
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "left";
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "left";
+                            enemy2.width = 20;
+                            enemy2.height = 10;
+                        }
+                    } else if(enemy2.x > 970 && enemy2.x < 990 && enemy2.y > 760 && enemy2.y < 780) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "up";
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "down";
+                        }
+                        else {
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "left";
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "left";
+                            enemy2.width = 20;
+                            enemy2.height = 10;
+                        }
+                    } else if(enemy2.x > 500 && enemy2.x < 510 && enemy2.y > 400 && enemy2.y < 420) {
+                        int v = rand.nextInt(3);
+                        if(v == 0 || v == 2 || v == 1) {
+                            if(enemy2.direction.equals("up")) {
+                                enemy2.direction = "up";
+                                enemy2.width = 10;
+                                enemy2.height = 20;
+                                if(v == 2) {
+                                    enemy2.direction = "left";
+                                    enemy2.width = 20;
+                                    enemy2.height = 10;
+                                }
+                                else {
+                                    enemy2.direction = "right";
+                                    enemy2.width = 20;
+                                    enemy2.height = 10;
+                                }
+                            }
+                            else if(enemy2.direction.equals("down")) {
+                                enemy2.direction = "down";
+                                enemy2.width = 10;
+                                enemy2.height = 20;
+                                if(v == 2) {
+                                    enemy2.direction = "right";
+                                    enemy2.width = 20;
+                                    enemy2.height = 10;
+                                }
+                                else {
+                                    enemy2.direction = "left";
+                                    enemy2.width = 20;
+                                    enemy2.height = 10;
+                                }
+                            }
+                            else if(enemy2.direction.equals("left")) {
+                                enemy2.direction = "left";
+                                enemy2.width = 20;
+                                enemy2.height = 10;
+                                if(v == 2) {
+                                    enemy2.direction = "down";
+                                    enemy2.width = 10;
+                                    enemy2.height = 20;
+                                }
+                                else {
+                                    enemy2.direction = "up";
+                                    enemy2.width = 10;
+                                    enemy2.height = 20;
+                                }
+                            }
+                        }
+                    } else if(enemy2.x > 500 && enemy2.x < 510 && enemy2.y > 0 && enemy2.y < 20) {
+                        int v = rand.nextInt(2);
+                        if(v == 0) {
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "right";
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "right";
+                        }
+                        else {
+                            if(enemy2.direction.equals("up"))
+                                enemy2.direction = "left";
+                            if(enemy2.direction.equals("down"))
+                                enemy2.direction = "left";
+                            enemy2.width = 20;
+                            enemy2.height = 10;
+                        }
+                    }
+                    if(enemyIsCollided() || enemy2IsCollided()) {
 
                         String cl = crashList.getText();
                         
-                        if(cl.equals("") || cl == null)
-                        {
-                            crashList.setText(enemy.brand 
-                                    + " (-$" + enemy.fine + ")");
+                        if(enemyIsCollided()) {
+                            if(cl.equals("") || cl == null)
+                            {
+                                crashList.setText(enemy.brand 
+                                        + " (-$" + enemy.fine + ")");
+                            }
+                            else if(!cl.equals(""))
+                            {
+                                crashList.setText(cl 
+                                        + System.getProperty("line.separator")
+                                        + enemy.brand + " (-$" + enemy.fine + ")");
+                            }
                         }
-                        else if(!cl.equals(""))
-                        {
-                            crashList.setText(cl 
-                                    + System.getProperty("line.separator")
-                                    + enemy.brand + " (-$" + enemy.fine + ")");
+                        
+                        if(enemy2IsCollided()) {
+                            if(cl.equals("") || cl == null)
+                            {
+                                crashList.setText(enemy2.brand 
+                                        + " (-$" + enemy2.fine + ")");
+                            }
+                            else if(!cl.equals(""))
+                            {
+                                crashList.setText(cl 
+                                        + System.getProperty("line.separator")
+                                        + enemy2.brand + " (-$" + enemy2.fine + ")");
+                            }
                         }
 
                         int u = rand.nextInt(4);
@@ -307,11 +866,42 @@ public class GoAroundi implements Runnable, KeyListener {
                             enemy.fine = 2800;
                         }
                         
-                        createEnemyAutomobile();
+                        u = rand.nextInt(4);
+                        if( u == 0 ) {
+                            enemy2.brand = "Mercedez";
+                            fines += 5000;
+                            enemy2.fine = 5000;
+                        }
+                        if( u == 1 ) {
+                            enemy2.brand = "Tatoyo";
+                            fines += 3000;
+                            enemy2.fine = 3000;
+                        }
+                        if( u == 2 ) {
+                            enemy2.brand = "Jeep";
+                            fines += 3800;
+                            enemy2.fine = 3800;
+                        }
+                        if( u == 3 ) {
+                            enemy2.brand = "Chrysler";
+                            fines += 2800;
+                            enemy2.fine = 2800;
+                        }
+
+                        if(enemyIsCollided())
+                            createEnemyAutomobile();
+                        
+                        if(enemy2IsCollided())
+                            createEnemy2Automobile();
+
+                        createAirplanes();
                     }
 
                     if(enemy.x < -100 || enemy.x > 1100 || enemy.y < -100 || enemy.y > 900)
                         createEnemyAutomobile();
+
+                    if(enemy2.x < -100 || enemy2.x > 1100 || enemy2.y < -100 || enemy2.y > 900)
+                        createEnemy2Automobile();
 
                     if(enemy.direction.equals("right"))
                         enemy.x += 2;
@@ -322,7 +912,33 @@ public class GoAroundi implements Runnable, KeyListener {
                     if(enemy.direction.equals("up"))
                         enemy.y -= 2;
 
+                    if(enemy2.direction.equals("right"))
+                        enemy2.x += 2;
+                    if(enemy2.direction.equals("left"))
+                        enemy2.x -= 2;
+                    if(enemy2.direction.equals("down"))
+                        enemy2.y += 2;
+                    if(enemy2.direction.equals("up"))
+                        enemy2.y -= 2;
+
+                    if(which.equals("R")) {
+                        airplane_R.x -= 20;
+                    }
+
+                    if(which.equals("L")) {
+                        airplane_L.x += 20;
+                    }
+
+                    if(which.equals("T")) {
+                        airplane_T.y += 20;
+                    }
+
+                    if(which.equals("D")) {
+                        airplane_D.y -= 20;
+                    }
+
                     drawEnemy();
+                    drawEnemy2();
                     try {
                         Thread.sleep(20);
                     } catch (InterruptedException interruptedException) {
@@ -336,6 +952,36 @@ public class GoAroundi implements Runnable, KeyListener {
         frame.addKeyListener(this);
     }
 
+    private void makeSound(String file) throws Exception {
+
+        File audioFile = new File(file);
+        AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+
+        AudioFormat format = audioStream.getFormat();
+
+        DataLine.Info info = new DataLine.Info(Clip.class, format);
+        Clip audioClip = (Clip) AudioSystem.getLine(info);
+
+        audioClip.open(audioStream);
+        audioClip.start();
+        audioStream.close();
+    }
+
+    public void drawAirplanes() {
+        Graphics g = panel.getGraphics();
+        
+        if(which.equals("L"))
+            g.drawImage(airplaneL, airplane_L.x, airplane_L.y, null);
+        if(which.equals("R"))
+            g.drawImage(airplaneR, airplane_R.x, airplane_R.y, null);
+        if(which.equals("T"))
+            g.drawImage(airplaneT, airplane_T.x, airplane_T.y, null);
+        if(which.equals("D"))
+            g.drawImage(airplaneD, airplane_D.x, airplane_D.y, null);
+
+        g.dispose();
+    }
+    
     public void createEnemyAutomobile() {
         int u = rand.nextInt(4);
         if( u == 0 ) {
@@ -435,25 +1081,179 @@ public class GoAroundi implements Runnable, KeyListener {
             enemy.height = 10;
             enemy.direction = "right";
         }
+        u = rand.nextInt(4);
+        if( u == 0 ) {
+            enemy2.brand = "Mercedez";
+        }
+        if( u == 1 ) {
+            enemy2.brand = "Tatoyo";
+        }
+        if( u == 2 ) {
+            enemy2.brand = "Jeep";
+        }
+        if( u == 3 ) {
+            enemy2.brand = "Chrysler";
+        }
     }
     
+    public void createEnemy2Automobile() {
+        int v = rand.nextInt(12);
+        if(v == 0) {
+            enemy2.x = -20;
+            enemy2.y = 5;
+            enemy2.width = 20;
+            enemy2.height = 10;
+            enemy2.direction = "right";
+        }
+        if(v == 1) {
+            enemy2.x = 5;
+            enemy2.y = -20;
+            enemy2.width = 10;
+            enemy2.height = 20;
+            enemy2.direction = "down";
+        }
+        if(v == 2) {
+            enemy2.x = 505;
+            enemy2.y = -20;
+            enemy2.width = 10;
+            enemy2.height = 20;
+            enemy2.direction = "down";
+        }
+        if(v == 3) {
+            enemy2.x = 960;
+            enemy2.y = -20;
+            enemy2.width = 10;
+            enemy2.height = 20;
+            enemy2.direction = "down";
+        }
+        if(v == 4) {
+            enemy2.x = 1020;
+            enemy2.y = 5;
+            enemy2.width = 20;
+            enemy2.height = 10;
+            enemy2.direction = "left";
+        }
+        if(v == 5) {
+            enemy2.x = 1020;
+            enemy2.y = 405;
+            enemy2.width = 20;
+            enemy2.height = 10;
+            enemy2.direction = "left";
+        }
+        if(v == 6) {
+            enemy2.x = 1020;
+            enemy2.y = 795;
+            enemy2.width = 20;
+            enemy2.height = 10;
+            enemy2.direction = "up";
+        }
+        if(v == 7) {
+            enemy2.x = 960;
+            enemy2.y = 820;
+            enemy2.width = 10;
+            enemy2.height = 20;
+            enemy2.direction = "up";
+        }
+        if(v == 8) {
+            enemy2.x = 505;
+            enemy2.y = 820;
+            enemy2.width = 10;
+            enemy2.height = 20;
+            enemy2.direction = "up";
+        }
+        if(v == 9) {
+            enemy2.x = 5;
+            enemy2.y = 820;
+            enemy2.width = 10;
+            enemy2.height = 20;
+            enemy2.direction = "up";
+        }
+        if(v == 10) {
+            enemy2.x = -20;
+            enemy2.y = 795;
+            enemy2.width = 20;
+            enemy2.height = 10;
+            enemy2.direction = "right";
+        }
+        if(v == 11) {
+            enemy2.x = -20;
+            enemy2.y = 405;
+            enemy2.width = 20;
+            enemy2.height = 10;
+            enemy2.direction = "right";
+        }
+    }
+    
+    public void createAirplanes() {
+        int v = rand.nextInt(4);
+        if(v == 0) {
+            airplane_L.x = -20;
+            airplane_L.y = 400;
+            which = "L";
+            airplane_R.x = -1000;
+            airplane_T.x = -1000;
+            airplane_D.x = -1000;
+        }
+        if(v == 1) {
+            airplane_R.x = 1020;
+            airplane_R.y = 400;
+            which = "R";
+            airplane_L.x = -1000;
+            airplane_T.x = -1000;
+            airplane_D.x = -1000;
+        }
+        if(v == 2) {
+            airplane_T.x = 500;
+            airplane_T.y = -20;
+            which = "T";
+            airplane_R.x = -1000;
+            airplane_L.x = -1000;
+            airplane_D.x = -1000;
+        }
+        if(v == 3) {
+            airplane_D.x = 500;
+            airplane_D.y = 800;
+            which = "D";
+            airplane_R.x = -1000;
+            airplane_T.x = -1000;
+            airplane_L.x = -1000;
+        }
+
+        try {
+            makeSound("sound.wav");
+        } catch(Exception e1) {
+            try {
+                makeSound("src/sound.wav");
+            } catch(Exception e2) {}
+        }
+    }
+
     public void drawCities() {
         try {
         Graphics g = panel.getGraphics();
         
-        g.setColor(Color.WHITE);
+        g.setColor(Color.red);
         
-        g.setFont(new Font("Curlz MT", Font.ITALIC, 50));
-        
-        g.drawString("City of", 200, 200-40);
-        g.drawString("City of", 600, 200-40);
-        g.drawString("City of", 600, 600-40);
-        g.drawString("City of", 200, 600-40);
+        g.setFont(new Font("Curlz MT", Font.ITALIC, 29));
 
-        g.drawString("L.A.", 200, 200);
-        g.drawString("EAST L.A.", 600, 200);
-        g.drawString("PICO RIVERA", 600, 600);
-        g.drawString("CAMPTON", 200, 600);
+        g.drawString("L.A.", 70, 120);
+        g.drawString("EAST L.A.", 310, 120);
+        g.drawString("POMONA", 610, 120);
+        g.drawString("ARTESIA", 810, 120);
+        g.drawString("PICO RIVERA", 310, 300);
+        g.drawString("PASADENA", 570, 300);
+        g.drawString("MONTEREY", 790, 300);
+        g.drawString("PARK", 820, 350);
+        g.drawString("CAMPTON", 40, 300);
+        g.drawString("SOUTH L.A.", 40, 500);
+        g.drawString("CORONA", 310, 500);
+        g.drawString("RIVERSIDE", 550, 500);
+        g.drawString("CHINO", 820, 500);
+        g.drawString("LONG BEACH", 40, 700);
+        g.drawString("ANAHEIM", 310, 700);
+        g.drawString("SAN PEDRO", 570, 700);
+        g.drawString("TEMECULA", 780, 700);
+ 
         } catch(Exception e) {frame.dispose();}   
     }
 
@@ -515,6 +1315,64 @@ public class GoAroundi implements Runnable, KeyListener {
         return false;
     }
     
+    public boolean enemy2IsCollided() {
+        try {
+            if(enemy2.direction.equals("left") || enemy2.direction.equals("right")) {
+                if(car.direction.equals("left") || car.direction.equals("right")) {
+                    if(car.direction.equals("right")) {
+                        if(car.x+car.width >= enemy2.x && car.x+car.width <= enemy2.x + enemy2.width) {
+                            if(car.y >= enemy2.y && car.y <= enemy2.y + enemy2.height) {
+                                return true;
+                            }
+                        }
+                    }
+                    if(car.direction.equals("left")) {
+                        if(car.x+car.width >= enemy2.x && car.x+car.width <= enemy2.x + enemy2.width) {
+                            if(car.y >= enemy2.y && car.y <= enemy2.y + enemy2.height) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                if(car.direction.equals("up") || car.direction.equals("down")) {
+                    if(car.direction.equals("down")) {
+                        if(car.x+car.width >= enemy2.x && car.x+car.width <= enemy2.x + enemy2.width) {
+                            if(car.y >= enemy2.y && car.y <= enemy2.y + enemy2.height) {
+                                return true;
+                            }
+                        }
+                    }
+                    if(car.direction.equals("up")) {
+                        if(car.x+car.width >= enemy2.x && car.x+car.width <= enemy2.x + enemy2.width) {
+                            if(car.y >= enemy2.y && car.y <= enemy2.y + enemy2.height) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            if(enemy2.direction.equals("up") || enemy2.direction.equals("down")) {
+                if(car.direction.equals("left") || car.direction.equals("right")) {
+                    if(car.x >= enemy2.x && car.x <= enemy2.x + enemy2.width) {
+                        if(car.y >= enemy2.y && car.y <= enemy2.y + enemy2.height) {
+                            return true;
+                        }
+                    }
+                }
+                if(car.direction.equals("up") || car.direction.equals("down")) {
+                    if(car.x >= enemy2.x && car.x <= enemy2.x + enemy2.width) {
+                        if(car.y >= enemy2.y && car.y <= enemy2.y + enemy2.height) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        } catch(Exception e) {
+            
+        }
+        return false;
+    }
+
     public void drawCar() {
         try {
         Graphics g = panel.getGraphics();
@@ -571,41 +1429,64 @@ public class GoAroundi implements Runnable, KeyListener {
         }
     }
     
+    class Map {
+        Color backColor = new Color(240, 231, 201);
+        Color lane = Color.GRAY;
+        Color line = Color.WHITE;
+        
+        void drawMap() {
+            Graphics g = panel.getGraphics();
+
+            try {
+                g.setColor(new Color(240, 231, 201));
+
+                g.fillRect(0, 0, 1000, 800);
+
+                g.setColor(Color.GRAY);
+
+                g.fillRect(0, 0, 1000, 20);
+                g.fillRect(0, 200, 1000, 20);
+                g.fillRect(0, 400, 1000, 20);
+                g.fillRect(0, 600, 1000, 20);
+                g.fillRect(0, 740, 1000, 20);
+
+                g.fillRect(0, 0, 20, 800);
+                g.fillRect(250, 0, 20, 800);
+                g.fillRect(500, 0, 20, 800);
+                g.fillRect(750, 0, 20, 800);
+                g.fillRect(960, 0, 20, 800);
+
+                g.setColor(Color.WHITE);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(2*i, 10, 5, 1);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(2*i, 410, 5, 1);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(2*i, 750, 5, 1);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(10, 2*i, 1, 5);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(510, 2*i, 1, 5);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(970, 2*i, 1, 5);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(2*i, 210, 5, 1);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(2*i, 610, 5, 1);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(10, 2*i, 1, 5);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(260, 2*i, 1, 5);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(760, 2*i, 1, 5);
+
+                g.dispose();
+            } catch(Exception e) {frame.dispose();}
+        }
+    }
+    
     public void drawMap() {
-        
-        Graphics g = panel.getGraphics();
-        
-        try {
-        g.setColor(new Color(240, 201, 201));
-        
-        g.fillRect(0, 0, 1000, 800);
-
-        g.setColor(Color.GRAY);
-        
-        g.fillRect(0, 0, 1000, 20);
-        g.fillRect(0, 400, 1000, 20);
-        g.fillRect(0, 700, 1000, 20);
-        
-        g.fillRect(0, 0, 20, 800);
-        g.fillRect(500, 0, 20, 800);
-        g.fillRect(960, 0, 20, 800);
-
-        g.setColor(Color.WHITE);
-        for(int i=0; i<=500; i+=5)
-            g.drawRect(2*i, 10, 5, 1);
-        for(int i=0; i<=500; i+=5)
-            g.drawRect(2*i, 410, 5, 1);
-        for(int i=0; i<=500; i+=5)
-            g.drawRect(2*i, 710, 5, 1);
-        for(int i=0; i<=500; i+=5)
-            g.drawRect(10, 2*i, 1, 5);
-        for(int i=0; i<=500; i+=5)
-            g.drawRect(510, 2*i, 1, 5);
-        for(int i=0; i<=500; i+=5)
-            g.drawRect(970, 2*i, 1, 5);
-        
-        g.dispose();
-        } catch(Exception e) {frame.dispose();}
+        map.drawMap();
     }
  
     public void run() {
