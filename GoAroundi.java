@@ -4,6 +4,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Vector;
 import javax.imageio.ImageIO;
@@ -27,6 +28,7 @@ public class GoAroundi implements Runnable, KeyListener {
     private JFrame frame = new JFrame();
     private JPanel panel = new JPanel();
     private Random rand = new Random();
+    private ArrayList<PotHole> potholes = new ArrayList<PotHole>();
     private int fines = 0;
     private String brandOfCrashCar = "N/A";
     private Vector<String> carCrashes = new Vector<String>();
@@ -35,6 +37,11 @@ public class GoAroundi implements Runnable, KeyListener {
     private Image airplaneT;
     private Image airplaneD;
     private String which = "L";
+    
+    class PotHole {
+        int x, y;
+        int width = 15;
+    }
     
     @Override
     public void keyPressed(KeyEvent e) {
@@ -91,7 +98,73 @@ public class GoAroundi implements Runnable, KeyListener {
         String direction = "T";
     }
     
+    public boolean isOutsideRangeForPothole(int x, int y) {
+        if(x > 20 && x < 250 && y > 20 && y < 200) {
+            return true;
+        }
+        if(x > 270 && x < 500 && y > 20 && y < 200) {
+            return true;
+        }
+        if(x > 520 && x < 750 && y > 20 && y < 200) {
+            return true;
+        }
+        if(x > 770 && x < 1000 && y > 20 && y < 200) {
+            return true;
+        }
+        if(x > 20 && x < 250 && y > 220 && y < 400) {
+            return true;
+        }
+        if(x > 270 && x < 500 && y > 220 && y < 400) {
+            return true;
+        }
+        if(x > 520 && x < 750 && y > 220 && y < 400) {
+            return true;
+        }
+        if(x > 770 && x < 1000 && y > 220 && y < 400) {
+            return true;
+        }
+        if(x > 20 && x < 250 && y > 420 && y < 600) {
+            return true;
+        }
+        if(x > 270 && x < 500 && y > 420 && y < 600) {
+            return true;
+        }
+        if(x > 520 && x < 750 && y > 420 && y < 600) {
+            return true;
+        }
+        if(x > 770 && x < 1000 && y > 420 && y < 600) {
+            return true;
+        }
+        if(x > 20 && x < 250 && y > 620 && y < 760) {
+            return true;
+        }
+        if(x > 270 && x < 500 && y > 620 && y < 760) {
+            return true;
+        }
+        if(x > 520 && x < 750 && y > 620 && y < 760) {
+            return true;
+        }
+        if(x > 770 && x < 1000 && y > 620 && y < 760) {
+            return true;
+        }
+        return false;
+    }
+    
     public GoAroundi() {
+        
+        for(int i=0; i<10; i++) {
+            int x; 
+            int y;
+            do {
+                x = rand.nextInt(1000);
+                y = rand.nextInt(800);
+            } while(isOutsideRangeForPothole(x, y));
+            PotHole pothole = new PotHole();
+            pothole.x = x;
+            pothole.y = y;
+            System.out.println(x + "," + y);
+System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.println(x + "," + y);            potholes.add(pothole);
+        }
         
         try {
             airplaneR = ImageIO.read(ClassLoader.getSystemResourceAsStream("airplaneL.png"));
@@ -193,13 +266,36 @@ public class GoAroundi implements Runnable, KeyListener {
 
         Thread t = new Thread() {
             public void run() {
+                int baby = 0;
                 while(true) {
                     
                     drawMap();
+                    drawPotholes();
                     drawCar();
                     drawCities();
                     drawAirplanes();
-
+                    
+                    for(int i=0; i<potholes.size(); i++) {
+                        if(car.x >= potholes.get(i).x && car.x <= potholes.get(i).x+potholes.get(i).width &&
+                                car.y >= potholes.get(i).y && car.y <= potholes.get(i).y+potholes.get(i).width) {
+                            car.speed = 0;
+                            car.timer = (int)((double)10*2.5);
+                            potholes.remove(potholes.get(i));
+                        }
+                    }
+                    
+                    if(car.timer == 0) {
+                        baby = 0;
+                        car.speed = 5;
+                    }
+                    
+                    baby++;
+                    
+                    if(baby == 10) {
+                        car.timer--;
+                        baby = 0;
+                    }
+                    
                     if(enemy.x > 500 && enemy.x < 510 && enemy.y > 0 && enemy.y < 20) {
                         int v = rand.nextInt(2);
                         if(v == 0) {
@@ -1183,8 +1279,12 @@ public class GoAroundi implements Runnable, KeyListener {
             enemy2.direction = "right";
         }
     }
-    
+    boolean firstTimeAirplaneFlies = true;
     public void createAirplanes() {
+        if(firstTimeAirplaneFlies) {
+            firstTimeAirplaneFlies = false;
+            return;
+        }
         int v = rand.nextInt(4);
         if(v == 0) {
             airplane_L.x = -20;
@@ -1378,9 +1478,21 @@ public class GoAroundi implements Runnable, KeyListener {
         Graphics g = panel.getGraphics();
         g.setColor(car.color);
         g.fillRect(car.x, car.y, car.width, car.height);
+        g.dispose();
         } catch(Exception e) {frame.dispose();}
     }
     
+    public void drawPotholes() {
+        try {
+            Graphics g = panel.getGraphics();
+            g.setColor(Color.black);
+            for(int i=0; i<potholes.size(); i++) {
+                g.fillOval(potholes.get(i).x, potholes.get(i).y, potholes.get(i).width, potholes.get(i).width);
+            }
+            g.dispose();
+        } catch(Exception e) {frame.dispose();}
+    }
+
     class Car {
         int x, y;
         int width;
@@ -1389,8 +1501,12 @@ public class GoAroundi implements Runnable, KeyListener {
         String direction;
         String brand;
         int fine;
+        int timer;
+        int speed;
         
         Car() {
+            speed = 5;
+            timer = 0;
             x = 105;
             y = 5;
             width = 20;
@@ -1403,28 +1519,28 @@ public class GoAroundi implements Runnable, KeyListener {
         void moveDown() {
             width = 10;
             height = 20;
-            y+=5;
+            y+=speed;
             direction = "down";
         }
 
         void moveUp() {
             width = 10;
             height = 20;
-            y-=5;
+            y-=speed;
             direction = "up";
         }
 
         void moveRight() {
             width = 20;
             height = 10;
-            x+=5;
+            x+=speed;
             direction = "right";
         }
 
         void moveLeft() {
             width = 20;
             height = 10;
-            x-=5;
+            x-=speed;
             direction = "left";
         }
     }
