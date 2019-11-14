@@ -17,6 +17,28 @@ import javax.swing.*;
 
 public class GoAroundi implements Runnable, KeyListener {
 
+    private GasStation gasStation = new GasStation();
+    
+    class GasStation {
+        int x, y;
+        int width;
+        int height;
+        Color color;
+
+        public GasStation() {
+            x = 700;
+            y = 300;
+            width = 50;
+            height = 100;
+            color = Color.YELLOW;
+        }
+        
+        public void refuel() {
+            life = 100;
+        }
+    }
+    
+    private int life = 100;
     private Map map = new Map();
     private Airplane airplane_L = new Airplane();
     private Airplane airplane_R = new Airplane();
@@ -57,13 +79,13 @@ public class GoAroundi implements Runnable, KeyListener {
             car.moveDown();
         drawEnemy();
         drawCar();
-//        try {
-//            makeSound("tick.wav");
-//        } catch(Exception e1) {
-//            try {
-//                makeSound("src/tick.wav");
-//            } catch(Exception e2) {}
-//        }
+        try {
+            makeSound("tick.wav");
+        } catch(Exception e1) {
+            try {
+                makeSound("src/tick.wav");
+            } catch(Exception e2) {}
+        }
     }
 
     @Override
@@ -73,6 +95,18 @@ public class GoAroundi implements Runnable, KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+    
+    public void drawGasStation() {
+        try {
+        Graphics g = panel.getGraphics();
+        g.setColor(Color.YELLOW);
+        g.fillRect(gasStation.x, gasStation.y, gasStation.width, gasStation.height);
+        g.setColor(Color.BLACK);
+        g.drawString("Gas", gasStation.x+5, gasStation.y+15);
+        g.drawString("Station", gasStation.x+5, gasStation.y+30);
+        g.dispose();
+        } catch(Exception e) {}
     }
     
     public void drawEnemy() {
@@ -99,52 +133,52 @@ public class GoAroundi implements Runnable, KeyListener {
     }
     
     public boolean isOutsideRangeForPothole(int x, int y) {
-        if(x > 20 && x < 250 && y > 20 && y < 200) {
+        if(x > 2 && x < 250 && y == 0) {
             return true;
         }
-        if(x > 270 && x < 500 && y > 20 && y < 200) {
+        if(x > 252 && x < 500 && y != 0) {
             return true;
         }
-        if(x > 520 && x < 750 && y > 20 && y < 200) {
+        if(x > 502 && x < 750 && y != 0) {
             return true;
         }
-        if(x > 770 && x < 1000 && y > 20 && y < 200) {
+        if(x > 752 && x < 1000 && y != 0) {
             return true;
         }
-        if(x > 20 && x < 250 && y > 220 && y < 400) {
+        if(x > 2 && x < 250 && y != 200) {
             return true;
         }
-        if(x > 270 && x < 500 && y > 220 && y < 400) {
+        if(x > 252 && x < 500 && y != 200) {
             return true;
         }
-        if(x > 520 && x < 750 && y > 220 && y < 400) {
+        if(x > 502 && x < 750 && y != 200) {
             return true;
         }
-        if(x > 770 && x < 1000 && y > 220 && y < 400) {
+        if(x > 752 && x < 1000 && y != 200) {
             return true;
         }
-        if(x > 20 && x < 250 && y > 420 && y < 600) {
+        if(x > 2 && x < 250 && y != 400) {
             return true;
         }
-        if(x > 270 && x < 500 && y > 420 && y < 600) {
+        if(x > 252 && x < 500 && y != 400) {
             return true;
         }
-        if(x > 520 && x < 750 && y > 420 && y < 600) {
+        if(x > 502 && x < 750 && y != 400) {
             return true;
         }
-        if(x > 770 && x < 1000 && y > 420 && y < 600) {
+        if(x > 752 && x < 1000 && y != 400) {
             return true;
         }
-        if(x > 20 && x < 250 && y > 620 && y < 760) {
+        if(x > 2 && x < 250 && y != 600) {
             return true;
         }
-        if(x > 270 && x < 500 && y > 620 && y < 760) {
+        if(x > 252 && x < 500 && y != 600) {
             return true;
         }
-        if(x > 520 && x < 750 && y > 620 && y < 760) {
+        if(x > 502 && x < 750 && y != 600) {
             return true;
         }
-        if(x > 770 && x < 1000 && y > 620 && y < 760) {
+        if(x > 752 && x < 1000 && y != 600) {
             return true;
         }
         return false;
@@ -254,11 +288,17 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
             }
         });
         
-        JLabel j = new JLabel("Simcar");
+        JLabel j = new JLabel("in America");
         j.setBounds(1070, 620, 200, 30);
-        j.setFont(new Font("arial", Font.BOLD, 30));
+        j.setFont(new Font("arial", Font.BOLD, 20));
         j.setForeground(Color.red);
         frame.add(j);
+
+        JLabel j2 = new JLabel(life + "");
+        j2.setBounds(1070, 700, 100, 30);
+        j2.setFont(new Font("arial", Font.BOLD, 20));
+        j2.setForeground(Color.GREEN);
+        frame.add(j2);
         
         frame.setVisible(true);
         
@@ -266,21 +306,46 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
 
         Thread t = new Thread() {
             public void run() {
+
                 int baby = 0;
+
+                int c = 0;
+                
                 while(true) {
+                    
+                    c++;
+                    
+                    j2.setText(life + "");
+                    if(c%200==0)
+                        life--;
+                    
+                    if(life == 0)
+                        System.exit(0);
                     
                     drawMap();
                     drawPotholes();
                     drawCar();
                     drawCities();
                     drawAirplanes();
+                    drawGasStation();
                     
+                    if(gasStation.x <= car.x && gasStation.x+gasStation.width >= car.x &&
+                            gasStation.y <= car.y && gasStation.y+gasStation.height >= car.y) {
+
+                        gasStation.refuel();
+                    }
+
                     for(int i=0; i<potholes.size(); i++) {
                         if(car.x >= potholes.get(i).x && car.x <= potholes.get(i).x+potholes.get(i).width &&
                                 car.y >= potholes.get(i).y && car.y <= potholes.get(i).y+potholes.get(i).width) {
                             car.speed = 0;
                             car.timer = (int)((double)10*2.5);
+                        String cl = crashList.getText();
+                        crashList.setText(cl 
+                                + System.getProperty("line.separator")
+                                + "uGotStuckInARut");
                             potholes.remove(potholes.get(i));
+                            life -= 23;
                         }
                     }
                     
@@ -294,6 +359,25 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
                     if(baby == 10) {
                         car.timer--;
                         baby = 0;
+                    }
+                    
+                    if(potholes.size() <= 4) {
+
+                        createAirplanes();
+            potholes.clear();
+        for(int i=0; i<10; i++) {
+            int x; 
+            int y;
+            do {
+                x = rand.nextInt(1000);
+                y = rand.nextInt(800);
+            } while(isOutsideRangeForPothole(x, y));
+            PotHole pothole = new PotHole();
+            pothole.x = x;
+            pothole.y = y;
+            System.out.println(x + "," + y);
+System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.println(x + "," + y);            potholes.add(pothole);
+        }
                     }
                     
                     if(enemy.x > 500 && enemy.x < 510 && enemy.y > 0 && enemy.y < 20) {
@@ -1047,20 +1131,23 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
         
         frame.addKeyListener(this);
     }
-
+    AudioInputStream audioStream;
+        File audioFile;
+        DataLine.Info info;
+        Clip audioClip;
+                AudioFormat format;
+                
     private void makeSound(String file) throws Exception {
-
-        File audioFile = new File(file);
-        AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
-
-        AudioFormat format = audioStream.getFormat();
-
-        DataLine.Info info = new DataLine.Info(Clip.class, format);
-        Clip audioClip = (Clip) AudioSystem.getLine(info);
-
-        audioClip.open(audioStream);
-        audioClip.start();
-        audioStream.close();
+ audioFile = new File(file);
+audioStream = AudioSystem.getAudioInputStream(audioFile);
+ format = audioStream.getFormat();
+        
+ info = new DataLine.Info(Clip.class, format);
+ audioClip = (Clip) AudioSystem.getLine(info);
+         audioClip.open(audioStream);
+audioClip.start();
+        
+        
     }
 
     public void drawAirplanes() {
@@ -1341,7 +1428,7 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
         g.drawString("POMONA", 610, 120);
         g.drawString("ARTESIA", 810, 120);
         g.drawString("PICO RIVERA", 310, 300);
-        g.drawString("PASADENA", 570, 300);
+        g.drawString("PASADENA", 570, 290);
         g.drawString("MONTEREY", 790, 300);
         g.drawString("PARK", 820, 350);
         g.drawString("CAMPTON", 40, 300);
@@ -1485,9 +1572,9 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
     public void drawPotholes() {
         try {
             Graphics g = panel.getGraphics();
-            g.setColor(Color.black);
+            g.setColor(Color.green);
             for(int i=0; i<potholes.size(); i++) {
-                g.fillOval(potholes.get(i).x, potholes.get(i).y, potholes.get(i).width, potholes.get(i).width);
+                g.fillRect(potholes.get(i).x, potholes.get(i).y, potholes.get(i).width, potholes.get(i).width);
             }
             g.dispose();
         } catch(Exception e) {frame.dispose();}
@@ -1554,7 +1641,7 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
             Graphics g = panel.getGraphics();
 
             try {
-                g.setColor(new Color(240, 231, 201));
+                g.setColor(Color.LIGHT_GRAY);
 
                 g.fillRect(0, 0, 1000, 800);
 
