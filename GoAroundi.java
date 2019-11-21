@@ -18,27 +18,34 @@ import javax.swing.*;
 public class GoAroundi implements Runnable, KeyListener {
 
     private GasStation gasStation = new GasStation();
+    private Graphics gg = null;
     
     class GasStation {
         int x, y;
         int width;
         int height;
-        Color color;
+        boolean gasNearEmpty;
+        Color color1;
+        Color color2;
+        Color color3;
 
         public GasStation() {
             x = 700;
             y = 300;
             width = 50;
             height = 100;
-            color = Color.YELLOW;
+            gasNearEmpty = false;
+            color1 = Color.BLUE;
+            color2 = Color.BLACK;
+            color3 = Color.WHITE;
         }
         
         public void refuel() {
-            life = 100;
+            life = 80;
         }
     }
     
-    private int life = 100;
+    private int life = 30;
     private Map map = new Map();
     private Airplane airplane_L = new Airplane();
     private Airplane airplane_R = new Airplane();
@@ -47,6 +54,7 @@ public class GoAroundi implements Runnable, KeyListener {
     private Car car = new Car();
     private Car enemy = new Car();
     private Car enemy2 = new Car();
+    private Car enemy3 = new Car();
     private JFrame frame = new JFrame();
     private JPanel panel = new JPanel();
     private Random rand = new Random();
@@ -79,13 +87,6 @@ public class GoAroundi implements Runnable, KeyListener {
             car.moveDown();
         drawEnemy();
         drawCar();
-        try {
-            makeSound("tick.wav");
-        } catch(Exception e1) {
-            try {
-                makeSound("src/tick.wav");
-            } catch(Exception e2) {}
-        }
     }
 
     @Override
@@ -99,31 +100,162 @@ public class GoAroundi implements Runnable, KeyListener {
     
     public void drawGasStation() {
         try {
-        Graphics g = panel.getGraphics();
-        g.setColor(Color.YELLOW);
-        g.fillRect(gasStation.x, gasStation.y, gasStation.width, gasStation.height);
-        g.setColor(Color.BLACK);
-        g.drawString("Gas", gasStation.x+5, gasStation.y+15);
-        g.drawString("Station", gasStation.x+5, gasStation.y+30);
-        g.dispose();
-        } catch(Exception e) {}
+            //Graphics g = panel.getGraphics();
+            if(!gasStation.gasNearEmpty)
+                gg.setColor(gasStation.color1);
+            gg.fillRect(gasStation.x, gasStation.y, gasStation.width, gasStation.height);
+            Graphics g = panel.getGraphics();
+            g.setColor(Color.GREEN);
+            g.drawString("Gas", gasStation.x+5, gasStation.y+15);
+            g.drawString("Station", gasStation.x+5, gasStation.y+30);
+            g.dispose();
+        } catch(Exception e) {e.printStackTrace(); }
     }
     
     public void drawEnemy() {
         try {
-        Graphics g = panel.getGraphics();
-        g.setColor(Color.blue);
-        g.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-        g.dispose();
+            Graphics g = panel.getGraphics();
+            Image img = null;
+            if(enemy.brand.equals("Volkswagen"))
+            if(enemy.direction.equals("up")) {
+                img = ImageIO.read(getClass().getResourceAsStream("volkswagen-up.png"));
+            } else if(enemy.direction.equals("down")) {
+                img = ImageIO.read(getClass().getResourceAsStream("volkswagen-down.png"));
+            } else if(enemy.direction.equals("left")) {
+                img = ImageIO.read(getClass().getResourceAsStream("volkswagen-left.png"));
+            } else {
+                img = ImageIO.read(getClass().getResourceAsStream("volkswagen-right.png"));
+            }
+            if(enemy.brand.equals("Datsun"))
+            if(enemy.direction.equals("up")) {
+                img = ImageIO.read(getClass().getResourceAsStream("datsun-up.png"));
+            } else if(enemy.direction.equals("down")) {
+                img = ImageIO.read(getClass().getResourceAsStream("datsun-down.png"));
+            } else if(enemy.direction.equals("left")) {
+                img = ImageIO.read(getClass().getResourceAsStream("datsun-left.png"));
+            } else {
+                img = ImageIO.read(getClass().getResourceAsStream("datsun-right.png"));
+            }
+            if(enemy.brand.equals("Honda"))
+            if(enemy.direction.equals("up")) {
+                img = ImageIO.read(getClass().getResourceAsStream("honda-up.png"));
+            } else if(enemy.direction.equals("down")) {
+                img = ImageIO.read(getClass().getResourceAsStream("honda-down.png"));
+            } else if(enemy.direction.equals("left")) {
+                img = ImageIO.read(getClass().getResourceAsStream("honda-left.png"));
+            } else {
+                img = ImageIO.read(getClass().getResourceAsStream("honda-right.png"));
+            }
+            if(enemy.brand.equals("Nissan"))
+            if(enemy.direction.equals("up")) {
+                img = ImageIO.read(getClass().getResourceAsStream("nissan-up.png"));
+            } else if(enemy.direction.equals("down")) {
+                img = ImageIO.read(getClass().getResourceAsStream("nissan-down.png"));
+            } else if(enemy.direction.equals("left")) {
+                img = ImageIO.read(getClass().getResourceAsStream("nissan-left.png"));
+            } else {
+                img = ImageIO.read(getClass().getResourceAsStream("nissan-right.png"));
+            }
+            g.drawImage(img, enemy.x, enemy.y, enemy.width, enemy.height, null);
+            g.dispose();
         } catch(Exception e) {}
     }
     
     public void drawEnemy2() {
         try {
-        Graphics g = panel.getGraphics();
-        g.setColor(Color.blue);
-        g.fillRect(enemy2.x, enemy2.y, enemy2.width, enemy2.height);
-        g.dispose();
+            Graphics g = panel.getGraphics();
+            Image img = null;
+            if(enemy2.brand.equals("Volkswagen"))
+            if(enemy2.direction.equals("up")) {
+                img = ImageIO.read(getClass().getResourceAsStream("volkswagen-up.png"));
+            } else if(enemy2.direction.equals("down")) {
+                img = ImageIO.read(getClass().getResourceAsStream("volkswagen-down.png"));
+            } else if(enemy2.direction.equals("left")) {
+                img = ImageIO.read(getClass().getResourceAsStream("volkswagen-left.png"));
+            } else {
+                img = ImageIO.read(getClass().getResourceAsStream("volkswagen-right.png"));
+            }
+            if(enemy2.brand.equals("Datsun"))
+            if(enemy2.direction.equals("up")) {
+                img = ImageIO.read(getClass().getResourceAsStream("datsun-up.png"));
+            } else if(enemy2.direction.equals("down")) {
+                img = ImageIO.read(getClass().getResourceAsStream("datsun-down.png"));
+            } else if(enemy2.direction.equals("left")) {
+                img = ImageIO.read(getClass().getResourceAsStream("datsun-left.png"));
+            } else {
+                img = ImageIO.read(getClass().getResourceAsStream("datsun-right.png"));
+            }
+            if(enemy2.brand.equals("Honda"))
+            if(enemy2.direction.equals("up")) {
+                img = ImageIO.read(getClass().getResourceAsStream("honda-up.png"));
+            } else if(enemy2.direction.equals("down")) {
+                img = ImageIO.read(getClass().getResourceAsStream("honda-down.png"));
+            } else if(enemy2.direction.equals("left")) {
+                img = ImageIO.read(getClass().getResourceAsStream("honda-left.png"));
+            } else {
+                img = ImageIO.read(getClass().getResourceAsStream("honda-right.png"));
+            }
+            if(enemy2.brand.equals("Nissan"))
+            if(enemy2.direction.equals("up")) {
+                img = ImageIO.read(getClass().getResourceAsStream("nissan-up.png"));
+            } else if(enemy2.direction.equals("down")) {
+                img = ImageIO.read(getClass().getResourceAsStream("nissan-down.png"));
+            } else if(enemy2.direction.equals("left")) {
+                img = ImageIO.read(getClass().getResourceAsStream("nissan-left.png"));
+            } else {
+                img = ImageIO.read(getClass().getResourceAsStream("nissan-right.png"));
+            }
+            g.drawImage(img, enemy2.x, enemy2.y, enemy2.width, enemy2.height, null);
+            g.dispose();
+        } catch(Exception e) {}
+    }
+
+    public void drawEnemy3() {
+        try {
+            Graphics g = panel.getGraphics();
+            Image img = null;
+            if(enemy3.brand.equals("Volkswagen"))
+            if(enemy3.direction.equals("up")) {
+                img = ImageIO.read(getClass().getResourceAsStream("volkswagen-up.png"));
+            } else if(enemy3.direction.equals("down")) {
+                img = ImageIO.read(getClass().getResourceAsStream("volkswagen-down.png"));
+            } else if(enemy3.direction.equals("left")) {
+                img = ImageIO.read(getClass().getResourceAsStream("volkswagen-left.png"));
+            } else {
+                img = ImageIO.read(getClass().getResourceAsStream("volkswagen-right.png"));
+            }
+            if(enemy3.brand.equals("Datsun"))
+            if(enemy3.direction.equals("up")) {
+                img = ImageIO.read(getClass().getResourceAsStream("datsun-up.png"));
+            } else if(enemy3.direction.equals("down")) {
+                img = ImageIO.read(getClass().getResourceAsStream("datsun-down.png"));
+            } else if(enemy3.direction.equals("left")) {
+                img = ImageIO.read(getClass().getResourceAsStream("datsun-left.png"));
+            } else {
+                img = ImageIO.read(getClass().getResourceAsStream("datsun-right.png"));
+            }
+            if(enemy3.brand.equals("Honda"))
+            if(enemy3.direction.equals("up")) {
+                img = ImageIO.read(getClass().getResourceAsStream("honda-up.png"));
+            } else if(enemy3.direction.equals("down")) {
+                img = ImageIO.read(getClass().getResourceAsStream("honda-down.png"));
+            } else if(enemy3.direction.equals("left")) {
+                img = ImageIO.read(getClass().getResourceAsStream("honda-left.png"));
+            } else {
+                img = ImageIO.read(getClass().getResourceAsStream("honda-right.png"));
+            }
+            if(enemy3.brand.equals("Nissan"))
+            if(enemy3.direction.equals("up")) {
+                img = ImageIO.read(getClass().getResourceAsStream("nissan-up.png"));
+            } else if(enemy3.direction.equals("down")) {
+                img = ImageIO.read(getClass().getResourceAsStream("nissan-down.png"));
+            } else if(enemy3.direction.equals("left")) {
+                img = ImageIO.read(getClass().getResourceAsStream("nissan-left.png"));
+            } else {
+                img = ImageIO.read(getClass().getResourceAsStream("nissan-right.png"));
+            }
+            g.drawImage(img, enemy3.x, enemy3.y, enemy3.width, enemy3.height, null);
+            g.dispose();
         } catch(Exception e) {}
     }
 
@@ -231,6 +363,8 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
 
         enemy2.x = -125;
         
+        enemy3.x = -125;
+
         JTextArea crashList = new JTextArea();
         
         crashList.setForeground(Color.CYAN);
@@ -316,7 +450,7 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
                     c++;
                     
                     j2.setText(life + "");
-                    if(c%200==0)
+                    if(c%50==0)
                         life--;
                     
                     if(life == 0)
@@ -329,12 +463,31 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
                     drawAirplanes();
                     drawGasStation();
                     
+                    if(gasStation.gasNearEmpty)
                     if(gasStation.x <= car.x && gasStation.x+gasStation.width >= car.x &&
                             gasStation.y <= car.y && gasStation.y+gasStation.height >= car.y) {
 
                         gasStation.refuel();
                     }
-
+//Honda (-$3000)
+//Honda (-$3800)
+//Honda (-$3000)
+//Volkswagen (-$3000)
+//uGotStuckInARut
+//Datsun (-$3000)
+//Datsun (-$3000)
+//Datsun (-$2800)
+//Datsun (-$2800)
+//Volkswagen (-$5000)
+//Datsun (-$3000)
+//Volkswagen (-$5000)
+//Nissan (-$3800)
+//Datsun (-$5000)
+//Honda (-$3800)
+//Datsun (-$3800)
+//Volkswagen (-$3000)
+//Honda (-$5000)
+//Nissan (-$2800)
                     for(int i=0; i<potholes.size(); i++) {
                         if(car.x >= potholes.get(i).x && car.x <= potholes.get(i).x+potholes.get(i).width &&
                                 car.y >= potholes.get(i).y && car.y <= potholes.get(i).y+potholes.get(i).width) {
@@ -345,7 +498,7 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
                                 + System.getProperty("line.separator")
                                 + "uGotStuckInARut");
                             potholes.remove(potholes.get(i));
-                            life -= 23;
+                            life -= 10;
                         }
                     }
                     
@@ -360,6 +513,11 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
                         car.timer--;
                         baby = 0;
                     }
+                    
+                    if(life < 25)
+                        gasStation.gasNearEmpty = true;
+                    else
+                        gasStation.gasNearEmpty = false;
                     
                     if(potholes.size() <= 4) {
 
@@ -992,7 +1150,7 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
                             enemy2.height = 10;
                         }
                     }
-                    if(enemyIsCollided() || enemy2IsCollided()) {
+                    if(enemyIsCollided() || enemy2IsCollided() || enemy3IsCollided()) {
 
                         String cl = crashList.getText();
                         
@@ -1024,48 +1182,84 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
                             }
                         }
 
+                        if(enemy3IsCollided()) {
+                            if(cl.equals("") || cl == null)
+                            {
+                                crashList.setText(enemy3.brand 
+                                        + " (-$" + enemy3.fine + ")");
+                            }
+                            else if(!cl.equals(""))
+                            {
+                                crashList.setText(cl 
+                                        + System.getProperty("line.separator")
+                                        + enemy3.brand + " (-$" + enemy3.fine + ")");
+                            }
+                        }
+
                         int u = rand.nextInt(4);
                         if( u == 0 ) {
-                            enemy.brand = "Mercedez";
+                            enemy.brand = "Volkswagen";
                             fines += 5000;
                             enemy.fine = 5000;
                         }
                         if( u == 1 ) {
-                            enemy.brand = "Tatoyo";
+                            enemy.brand = "Datsun";
                             fines += 3000;
                             enemy.fine = 3000;
                         }
                         if( u == 2 ) {
-                            enemy.brand = "Jeep";
+                            enemy.brand = "Honda";
                             fines += 3800;
                             enemy.fine = 3800;
                         }
                         if( u == 3 ) {
-                            enemy.brand = "Chrysler";
+                            enemy.brand = "Nissan";
                             fines += 2800;
                             enemy.fine = 2800;
                         }
                         
                         u = rand.nextInt(4);
                         if( u == 0 ) {
-                            enemy2.brand = "Mercedez";
+                            enemy2.brand = "Volkswagen";
                             fines += 5000;
                             enemy2.fine = 5000;
                         }
                         if( u == 1 ) {
-                            enemy2.brand = "Tatoyo";
+                            enemy2.brand = "Datsun";
                             fines += 3000;
                             enemy2.fine = 3000;
                         }
                         if( u == 2 ) {
-                            enemy2.brand = "Jeep";
+                            enemy2.brand = "Honda";
                             fines += 3800;
                             enemy2.fine = 3800;
                         }
                         if( u == 3 ) {
-                            enemy2.brand = "Chrysler";
+                            enemy2.brand = "Nissan";
                             fines += 2800;
                             enemy2.fine = 2800;
+                        }
+
+                        u = rand.nextInt(4);
+                        if( u == 0 ) {
+                            enemy3.brand = "Volkswagen";
+                            fines += 5000;
+                            enemy3.fine = 5000;
+                        }
+                        if( u == 1 ) {
+                            enemy3.brand = "Datsun";
+                            fines += 3000;
+                            enemy3.fine = 3000;
+                        }
+                        if( u == 2 ) {
+                            enemy3.brand = "Honda";
+                            fines += 3800;
+                            enemy3.fine = 3800;
+                        }
+                        if( u == 3 ) {
+                            enemy3.brand = "Nissan";
+                            fines += 2800;
+                            enemy3.fine = 2800;
                         }
 
                         if(enemyIsCollided())
@@ -1073,6 +1267,9 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
                         
                         if(enemy2IsCollided())
                             createEnemy2Automobile();
+
+                        if(enemy3IsCollided())
+                            createEnemy3Automobile();
 
                         createAirplanes();
                     }
@@ -1082,6 +1279,9 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
 
                     if(enemy2.x < -100 || enemy2.x > 1100 || enemy2.y < -100 || enemy2.y > 900)
                         createEnemy2Automobile();
+
+                    if(enemy3.x < -100 || enemy3.x > 1100 || enemy3.y < -100 || enemy3.y > 900)
+                        createEnemy3Automobile();
 
                     if(enemy.direction.equals("right"))
                         enemy.x += 2;
@@ -1101,6 +1301,15 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
                     if(enemy2.direction.equals("up"))
                         enemy2.y -= 2;
 
+                    if(enemy3.direction.equals("right"))
+                        enemy3.x += 2;
+                    if(enemy3.direction.equals("left"))
+                        enemy3.x -= 2;
+                    if(enemy3.direction.equals("down"))
+                        enemy3.y += 2;
+                    if(enemy3.direction.equals("up"))
+                        enemy3.y -= 2;
+
                     if(which.equals("R")) {
                         airplane_R.x -= 20;
                     }
@@ -1119,6 +1328,7 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
 
                     drawEnemy();
                     drawEnemy2();
+                    drawEnemy3();
                     try {
                         Thread.sleep(20);
                     } catch (InterruptedException interruptedException) {
@@ -1128,7 +1338,35 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
         };
         
         t.start();
+
+        gg = panel.getGraphics();
         
+        Thread thread = new Thread() {
+            public void run() {
+                int o = 1;
+                while(true) {
+                    if(gasStation.gasNearEmpty) {
+                        if(o == 2)
+                            gg.setColor(gasStation.color2);
+                        else
+                            gg.setColor(gasStation.color3);
+                        try {
+                            Thread.sleep(1000);
+                            if(o < 2)
+                                o = 2;
+                            else
+                                o = 1;
+                        } catch(InterruptedException ie) {
+                            ie.printStackTrace();
+                        }
+                    } else {
+                        gg.setColor(gasStation.color1);
+                    }
+                }
+            }
+        };
+        thread.start();
+
         frame.addKeyListener(this);
     }
     AudioInputStream audioStream;
@@ -1168,16 +1406,16 @@ audioClip.start();
     public void createEnemyAutomobile() {
         int u = rand.nextInt(4);
         if( u == 0 ) {
-            enemy.brand = "Mercedez";
+            enemy.brand = "Volkswagen";
         }
         if( u == 1 ) {
-            enemy.brand = "Tatoyo";
+            enemy.brand = "Datsun";
         }
         if( u == 2 ) {
-            enemy.brand = "Jeep";
+            enemy.brand = "Honda";
         }
         if( u == 3 ) {
-            enemy.brand = "Chrysler";
+            enemy.brand = "Nissan";
         }
         int v = rand.nextInt(12);
         if(v == 0) {
@@ -1263,23 +1501,23 @@ audioClip.start();
             enemy.width = 20;
             enemy.height = 10;
             enemy.direction = "right";
-        }
-        u = rand.nextInt(4);
-        if( u == 0 ) {
-            enemy2.brand = "Mercedez";
-        }
-        if( u == 1 ) {
-            enemy2.brand = "Tatoyo";
-        }
-        if( u == 2 ) {
-            enemy2.brand = "Jeep";
-        }
-        if( u == 3 ) {
-            enemy2.brand = "Chrysler";
         }
     }
     
     public void createEnemy2Automobile() {
+        int u = rand.nextInt(4);
+        if( u == 0 ) {
+            enemy2.brand = "Volkswagen";
+        }
+        if( u == 1 ) {
+            enemy2.brand = "Datsun";
+        }
+        if( u == 2 ) {
+            enemy2.brand = "Honda";
+        }
+        if( u == 3 ) {
+            enemy2.brand = "Nissan";
+        }
         int v = rand.nextInt(12);
         if(v == 0) {
             enemy2.x = -20;
@@ -1364,6 +1602,106 @@ audioClip.start();
             enemy2.width = 20;
             enemy2.height = 10;
             enemy2.direction = "right";
+        }
+    }
+    public void createEnemy3Automobile() {
+        int u = rand.nextInt(4);
+        if( u == 0 ) {
+            enemy3.brand = "Volkswagen";
+        }
+        if( u == 1 ) {
+            enemy3.brand = "Datsun";
+        }
+        if( u == 2 ) {
+            enemy3.brand = "Honda";
+        }
+        if( u == 3 ) {
+            enemy3.brand = "Nissan";
+        }
+        int v = rand.nextInt(12);
+        if(v == 0) {
+            enemy3.x = -20;
+            enemy3.y = 5;
+            enemy3.width = 20;
+            enemy3.height = 10;
+            enemy3.direction = "right";
+        }
+        if(v == 1) {
+            enemy3.x = 5;
+            enemy3.y = -20;
+            enemy3.width = 10;
+            enemy3.height = 20;
+            enemy3.direction = "down";
+        }
+        if(v == 2) {
+            enemy3.x = 505;
+            enemy3.y = -20;
+            enemy3.width = 10;
+            enemy3.height = 20;
+            enemy3.direction = "down";
+        }
+        if(v == 3) {
+            enemy3.x = 960;
+            enemy3.y = -20;
+            enemy3.width = 10;
+            enemy3.height = 20;
+            enemy3.direction = "down";
+        }
+        if(v == 4) {
+            enemy3.x = 1020;
+            enemy3.y = 5;
+            enemy3.width = 20;
+            enemy3.height = 10;
+            enemy3.direction = "left";
+        }
+        if(v == 5) {
+            enemy3.x = 1020;
+            enemy3.y = 405;
+            enemy3.width = 20;
+            enemy3.height = 10;
+            enemy3.direction = "left";
+        }
+        if(v == 6) {
+            enemy3.x = 1020;
+            enemy3.y = 795;
+            enemy3.width = 20;
+            enemy3.height = 10;
+            enemy3.direction = "up";
+        }
+        if(v == 7) {
+            enemy3.x = 960;
+            enemy3.y = 820;
+            enemy3.width = 10;
+            enemy3.height = 20;
+            enemy3.direction = "up";
+        }
+        if(v == 8) {
+            enemy3.x = 505;
+            enemy3.y = 820;
+            enemy3.width = 10;
+            enemy3.height = 20;
+            enemy3.direction = "up";
+        }
+        if(v == 9) {
+            enemy3.x = 5;
+            enemy3.y = 820;
+            enemy3.width = 10;
+            enemy3.height = 20;
+            enemy3.direction = "up";
+        }
+        if(v == 10) {
+            enemy3.x = -20;
+            enemy3.y = 795;
+            enemy3.width = 20;
+            enemy3.height = 10;
+            enemy3.direction = "right";
+        }
+        if(v == 11) {
+            enemy3.x = -20;
+            enemy3.y = 405;
+            enemy3.width = 20;
+            enemy3.height = 10;
+            enemy3.direction = "right";
         }
     }
     boolean firstTimeAirplaneFlies = true;
@@ -1560,19 +1898,77 @@ audioClip.start();
         return false;
     }
 
+    public boolean enemy3IsCollided() {
+        try {
+            if(enemy3.direction.equals("left") || enemy3.direction.equals("right")) {
+                if(car.direction.equals("left") || car.direction.equals("right")) {
+                    if(car.direction.equals("right")) {
+                        if(car.x+car.width >= enemy3.x && car.x+car.width <= enemy3.x + enemy3.width) {
+                            if(car.y >= enemy3.y && car.y <= enemy3.y + enemy3.height) {
+                                return true;
+                            }
+                        }
+                    }
+                    if(car.direction.equals("left")) {
+                        if(car.x+car.width >= enemy3.x && car.x+car.width <= enemy3.x + enemy3.width) {
+                            if(car.y >= enemy3.y && car.y <= enemy3.y + enemy3.height) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                if(car.direction.equals("up") || car.direction.equals("down")) {
+                    if(car.direction.equals("down")) {
+                        if(car.x+car.width >= enemy3.x && car.x+car.width <= enemy3.x + enemy3.width) {
+                            if(car.y >= enemy3.y && car.y <= enemy3.y + enemy3.height) {
+                                return true;
+                            }
+                        }
+                    }
+                    if(car.direction.equals("up")) {
+                        if(car.x+car.width >= enemy3.x && car.x+car.width <= enemy3.x + enemy3.width) {
+                            if(car.y >= enemy3.y && car.y <= enemy3.y + enemy3.height) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            if(enemy3.direction.equals("up") || enemy3.direction.equals("down")) {
+                if(car.direction.equals("left") || car.direction.equals("right")) {
+                    if(car.x >= enemy3.x && car.x <= enemy3.x + enemy3.width) {
+                        if(car.y >= enemy3.y && car.y <= enemy3.y + enemy3.height) {
+                            return true;
+                        }
+                    }
+                }
+                if(car.direction.equals("up") || car.direction.equals("down")) {
+                    if(car.x >= enemy3.x && car.x <= enemy3.x + enemy3.width) {
+                        if(car.y >= enemy3.y && car.y <= enemy3.y + enemy3.height) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        } catch(Exception e) {
+            
+        }
+        return false;
+    }
+
     public void drawCar() {
         try {
-        Graphics g = panel.getGraphics();
-        g.setColor(car.color);
-        g.fillRect(car.x, car.y, car.width, car.height);
-        g.dispose();
+            Graphics g = panel.getGraphics();
+            g.setColor(car.color);
+            g.fillRect(car.x, car.y, car.width, car.height);
+            g.dispose();
         } catch(Exception e) {frame.dispose();}
     }
     
     public void drawPotholes() {
         try {
             Graphics g = panel.getGraphics();
-            g.setColor(Color.green);
+            g.setColor(Color.magenta);
             for(int i=0; i<potholes.size(); i++) {
                 g.fillRect(potholes.get(i).x, potholes.get(i).y, potholes.get(i).width, potholes.get(i).width);
             }
@@ -1598,7 +1994,7 @@ audioClip.start();
             y = 5;
             width = 20;
             height = 10;
-            color = Color.BLACK;
+            color = Color.RED;
             brand = "Tatoyo";
             fine = 3000;
         }
