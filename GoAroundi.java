@@ -41,11 +41,11 @@ public class GoAroundi implements Runnable, KeyListener {
         }
         
         public void refuel() {
-            life = 80;
+            life = 47;
         }
     }
     
-    private int life = 30;
+    private int life = 47;
     private Map map = new Map();
     private Airplane airplane_L = new Airplane();
     private Airplane airplane_R = new Airplane();
@@ -104,11 +104,11 @@ public class GoAroundi implements Runnable, KeyListener {
             if(!gasStation.gasNearEmpty)
                 gg.setColor(gasStation.color1);
             gg.fillRect(gasStation.x, gasStation.y, gasStation.width, gasStation.height);
-            Graphics g = panel.getGraphics();
-            g.setColor(Color.GREEN);
-            g.drawString("Gas", gasStation.x+5, gasStation.y+15);
-            g.drawString("Station", gasStation.x+5, gasStation.y+30);
-            g.dispose();
+            //Graphics g = panel.getGraphics();
+            //g.setColor(Color.GREEN);
+            //g.drawString("Gas", gasStation.x+5, gasStation.y+15);
+            //g.drawString("Station", gasStation.x+5, gasStation.y+30);
+            //g.dispose();
         } catch(Exception e) {e.printStackTrace(); }
     }
     
