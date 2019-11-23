@@ -18,6 +18,7 @@ import javax.swing.*;
 public class GoAroundi implements Runnable, KeyListener {
 
     private GasStation gasStation = new GasStation();
+    private GasStation gasStation2 = new GasStation();
     private Graphics gg = null;
     
     class GasStation {
@@ -73,6 +74,208 @@ public class GoAroundi implements Runnable, KeyListener {
         int width = 15;
     }
     
+    private boolean itsOkay() {
+        if(itsOkay1())
+            return true;
+        return false;
+    }
+
+    private boolean itsOkay1() {
+        if((car.x >= 20 && car.x <= 250 &&
+             car.y >= 20 && car.y <= 200) ||
+                (car.x >= 270 && car.x <= 500 &&
+             car.y >= 20 && car.y <= 200) ||
+                (car.x >= 770 && car.x <= 1000 &&
+             car.y >= 20 && car.y <= 200) ||
+                (car.x >= 520 && car.x <= 750 &&
+             car.y >= 20 && car.y <= 200) ||
+                (car.x >= 20 && car.x <= 250 &&
+             car.y >= 220 && car.y <= 400) ||
+                (car.x >= 20 && car.x <= 250 &&
+             car.y >= 420 && car.y <= 600) ||
+                (car.x >= 270 && car.x <= 500 &&
+             car.y >= 20 && car.y <= 200) ||
+                (car.x >= 270 && car.x <= 500 &&
+             car.y >= 220 && car.y <= 400) ||
+                (car.x >= 270 && car.x <= 500 &&
+             car.y >= 420 && car.y <= 600) ||
+                (car.x >= 520 && car.x <= 750 &&
+             car.y >= 420 && car.y <= 600) ||
+                (car.x >= 520 && car.x <= 750 &&
+             car.y >= 220 && car.y <= 400) ||
+                (car.x >= 520 && car.x <= 750 &&
+             car.y >= 620 && car.y <= 700) ||
+                (car.x >= 770 && car.x <= 1000 &&
+             car.y >= 220 && car.y <= 400) ||
+                (car.x >= 770 && car.x <= 1000 &&
+             car.y >= 420 && car.y <= 600)) {
+            if(car.x >= gasStation.x && car.x <= gasStation.x + gasStation.width &&
+                    car.y >= gasStation.y && car.y <= gasStation.y + gasStation.height)
+            {
+                return true;
+            }
+            else if(car.x >= gasStation2.x && car.x <= gasStation2.x + gasStation.width &&
+                    car.y >= gasStation2.y && car.y <= gasStation2.y + gasStation.height)
+            {
+                return true;
+            }
+            car.x = 0;
+            car.y = 0;
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean itsOkay2() {
+        if(!(car.x >= 260 && car.x <= 500 &&
+             car.y >= 10 && car.y <= 250)) {
+            return true;
+        }
+        if(car.y >= 10 && car.y <= 250)
+            car.y = 0;
+        return false;
+    }
+
+    private boolean itsOkay3() {
+        if(!(car.x >= 760 && car.x <= 1000 &&
+             car.y >= 10 && car.y <= 250)) {
+            return true;
+        }
+        if(car.y >= 10 && car.y <= 250)
+            car.y = 0;
+        return false;
+    }
+    
+    private boolean itsOkay4() {
+        if(!(car.x >= 510 && car.x <= 750 &&
+             car.y >= 10 && car.y <= 250)) {
+            return true;
+        }
+        if(car.y >= 10 && car.y <= 250)
+            car.y = 0;
+        return false;
+    }
+
+    private boolean itsOkay5() {
+        if(!(car.x >= 10 && car.x <= 250 &&
+             car.y >= 260 && car.y <= 500)) {
+            return true;
+        }
+        if(car.y >= 260 && car.y <= 500)
+            car.y = 250;
+        return false;
+    }
+    
+    private boolean itsOkay6() {
+        if(!(car.x >= 10 && car.x <= 250 &&
+             car.y >= 510 && car.y <= 600)) {
+            return true;
+        }
+        if(car.y >= 510 && car.y <= 600)
+            car.y = 500;
+        return false;
+    }
+
+    private boolean itsOkay7() {
+        if(!(car.x >= 260 && car.x <= 500 &&
+             car.y >= 10 && car.y <= 250)) {
+            return true;
+        }
+        if(car.y >= 10 && car.y <= 250)
+            car.y = 0;
+        return false;
+    }
+    
+    private boolean itsOkay8() {
+        if(!(car.x >= 260 && car.x <= 500 &&
+             car.y >= 260 && car.y <= 500)) {
+            return true;
+        }
+        if(car.y >= 260 && car.y <= 500)
+            car.y = 250;
+        return false;
+    }
+
+    private boolean itsOkay9() {
+        if(!(car.x >= 260 && car.x <= 500 &&
+             car.y >= 510 && car.y <= 600)) {
+            return true;
+        }
+        if(car.y >= 510 && car.y <= 600)
+            car.y = 500;
+        return false;
+    }
+    
+    private boolean itsOkay10() {
+        if(!(car.x >= 510 && car.x <= 750 &&
+             car.y >= 510 && car.y <= 600)) {
+            return true;
+        }
+        if(car.y >= 510 && car.y <= 600)
+            car.y = 500;
+        return false;
+    }
+
+    private boolean itsOkay11() {
+        if(!(car.x >= 510 && car.x <= 750 &&
+             car.y >= 260 && car.y <= 500)) {
+            return true;
+        }
+        if(car.y >= 260 && car.y <= 500)
+            car.y = 250;
+        return false;
+    }
+    
+    private boolean itsOkay12() {
+        if(!(car.x >= 510 && car.x <= 750 &&
+             car.y >= 510 && car.y <= 750)) {
+            return true;
+        }
+        if(car.y >= 510 && car.y <= 600)
+            car.y = 500;
+        return false;
+    }
+
+    private boolean itsOkay13() {
+        if(!(car.x >= 510 && car.x <= 750 &&
+             car.y >= 760 && car.y <= 1000)) {
+            return true;
+        }
+        if(car.y >= 510 && car.y <= 600)
+            car.y = 500;
+        return false;
+    }
+    
+    private boolean itsOkay14() {
+        if(!(car.x >= 760 && car.x <= 1000 &&
+             car.y >= 10 && car.y <= 250)) {
+            return true;
+        }
+        if(car.y >= 510 && car.y <= 600)
+            car.y = 500;
+        return false;
+    }
+
+    private boolean itsOkay15() {
+        if(!(car.x >= 760 && car.x <= 1000 &&
+             car.y >= 260 && car.y <= 500)) {
+            return true;
+        }
+        if(car.y >= 510 && car.y <= 600)
+            car.y = 500;
+        return false;
+    }
+    
+    private boolean itsOkay16() {
+        if(!(car.x >= 760 && car.x <= 1000 &&
+             car.y >= 510 && car.y <= 600)) {
+            return true;
+        }
+        if(car.y >= 510 && car.y <= 600)
+            car.y = 500;
+        return false;
+    }
+
     @Override
     public void keyPressed(KeyEvent e) {
         drawMap();
@@ -112,6 +315,20 @@ public class GoAroundi implements Runnable, KeyListener {
         } catch(Exception e) {e.printStackTrace(); }
     }
     
+    public void drawGasStation2() {
+        try {
+            //Graphics g = panel.getGraphics();
+            if(!gasStation2.gasNearEmpty)
+                gg.setColor(gasStation2.color1);
+            gg.fillRect(gasStation2.x, gasStation2.y, gasStation2.width, gasStation2.height);
+            //Graphics g = panel.getGraphics();
+            //g.setColor(Color.GREEN);
+            //g.drawString("Gas", gasStation.x+5, gasStation.y+15);
+            //g.drawString("Station", gasStation.x+5, gasStation.y+30);
+            //g.dispose();
+        } catch(Exception e) {e.printStackTrace(); }
+    }
+
     public void drawEnemy() {
         try {
             Graphics g = panel.getGraphics();
@@ -364,6 +581,9 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
         enemy2.x = -125;
         
         enemy3.x = -125;
+        
+        gasStation2.x = 200;
+        gasStation2.y = 620;
 
         JTextArea crashList = new JTextArea();
         
@@ -462,12 +682,20 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
                     drawCities();
                     drawAirplanes();
                     drawGasStation();
+                    drawGasStation2();
                     
                     if(gasStation.gasNearEmpty)
                     if(gasStation.x <= car.x && gasStation.x+gasStation.width >= car.x &&
                             gasStation.y <= car.y && gasStation.y+gasStation.height >= car.y) {
 
                         gasStation.refuel();
+                    }
+
+                    if(gasStation2.gasNearEmpty)
+                    if(gasStation2.x <= car.x && gasStation2.x+gasStation2.width >= car.x &&
+                            gasStation2.y <= car.y && gasStation2.y+gasStation2.height >= car.y) {
+
+                        gasStation2.refuel();
                     }
 //Honda (-$3000)
 //Honda (-$3800)
@@ -519,6 +747,11 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
                     else
                         gasStation.gasNearEmpty = false;
                     
+                    if(life < 25)
+                        gasStation2.gasNearEmpty = true;
+                    else
+                        gasStation2.gasNearEmpty = false;
+
                     if(potholes.size() <= 4) {
 
                         createAirplanes();
@@ -1344,6 +1577,7 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
         Thread thread = new Thread() {
             public void run() {
                 int o = 1;
+                int t = 1;
                 while(true) {
                     if(gasStation.gasNearEmpty) {
                         if(o == 2)
@@ -1361,6 +1595,24 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
                         }
                     } else {
                         gg.setColor(gasStation.color1);
+                    }
+                    
+                    if(gasStation2.gasNearEmpty) {
+                        if(t == 2)
+                            gg.setColor(gasStation2.color2);
+                        else
+                            gg.setColor(gasStation2.color3);
+                        try {
+                            Thread.sleep(1000);
+                            if(t < 2)
+                                t = 2;
+                            else
+                                t = 1;
+                        } catch(InterruptedException ie) {
+                            ie.printStackTrace();
+                        }
+                    } else {
+                        gg.setColor(gasStation2.color1);
                     }
                 }
             }
@@ -2000,31 +2252,39 @@ audioClip.start();
         }
         
         void moveDown() {
-            width = 10;
-            height = 20;
-            y+=speed;
-            direction = "down";
+            if(itsOkay()) {
+                width = 10;
+                height = 20;
+                y+=speed;
+                direction = "down";
+            }
         }
 
         void moveUp() {
-            width = 10;
-            height = 20;
-            y-=speed;
-            direction = "up";
+            if(itsOkay()) {
+                width = 10;
+                height = 20;
+                y-=speed;
+                direction = "up";
+            }
         }
 
         void moveRight() {
-            width = 20;
-            height = 10;
-            x+=speed;
-            direction = "right";
+            if(itsOkay()) {
+                width = 20;
+                height = 10;
+                x+=speed;
+                direction = "right";
+            }
         }
 
         void moveLeft() {
-            width = 20;
-            height = 10;
-            x-=speed;
-            direction = "left";
+            if(itsOkay()) {
+                width = 20;
+                height = 10;
+                x-=speed;
+                direction = "left";
+            }
         }
     }
     
