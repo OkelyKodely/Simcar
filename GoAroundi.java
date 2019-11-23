@@ -4,6 +4,10 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Vector;
@@ -46,6 +50,8 @@ public class GoAroundi implements Runnable, KeyListener {
         }
     }
     
+    private    Connection conn = null;
+
     private int life = 47;
     private Map map = new Map();
     private Airplane airplane_L = new Airplane();
@@ -534,7 +540,29 @@ public class GoAroundi implements Runnable, KeyListener {
     }
     
     public GoAroundi() {
-        
+
+        String sql = "";
+        String hostName = "localhost";
+        String dbName = "mydb7";
+        String userName = "root";
+        String password = "";
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            String url = "jdbc:mysql://" + hostName + ":3320/" + dbName + "?user=" + userName + "&password=" + password;
+            conn = DriverManager.getConnection(url);
+        } catch(Exception e) {
+        }
+
+        try {
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery("select content from tabl;");
+        if(rs.next()) {
+
+            sql = rs.getString("content");
+        }
+        } catch(Exception e) {}
+
         for(int i=0; i<10; i++) {
             int x; 
             int y;
@@ -624,6 +652,10 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null, "Your total fines: -$" + fines);
+                try {
+                    Statement stt = conn.createStatement();
+                    stt.execute("update tabl set content = '"+crashList.getText()+"';");
+                } catch(Exception ibee) {ibee.printStackTrace();}
                 System.exit(0);
             }
         });
@@ -1571,6 +1603,8 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
         };
         
         t.start();
+        
+        crashList.setText(sql);
 
         gg = panel.getGraphics();
         
