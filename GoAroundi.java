@@ -1120,6 +1120,9 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
                 while(true) {
                     
                     c++;
+//Thanksgiving Day
+
+//This is a joyous day when the pilgrims arrived in the New World, to make their mark upon the glory of God for their destiny.  They did not have much food so they got their grace from the Natives of that land and we still honor this union today by coming together and sharing our meal rather than making our meal from someone who is designated.  This is God’s grace at work.  We celebrate it with those also who are less fortunate than us and we bask in that grace with turkey and gravy and mashed potatoes.  This is good.  So we thank our God for his many blessings but especially for Christ in our lives and in our hearts.  We thank him many times because he is that worthy to receive thanksgiving from us.  That is why we call it Thanksgiving Day.  Because we give thanks to a God who is worthy to receive our thanks from those who have been blessed by him through his many provisions and his many condigning love in our lives.  And it shows!  That’s why it should show.  We do this every year.  But really we should do it more often as much as we can.  Amen.
                     
                     j2.setText(life + "");
                     if(c%50==0)
