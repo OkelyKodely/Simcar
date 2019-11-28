@@ -33,6 +33,7 @@ public class GoAroundi implements Runnable, KeyListener {
     private boolean pasaMapChosen = false;
     private boolean pomoMapChosen = false;
     private boolean artMapChosen = false;
+    private boolean sanMapChosen = false;
     
     private LA_Map la_map = new LA_Map();
     private ELA_Map ela_map = new ELA_Map();
@@ -41,6 +42,7 @@ public class GoAroundi implements Runnable, KeyListener {
     private Pasadena_Map pasa_map = new Pasadena_Map();
     private Pomona_Map pomo_map = new Pomona_Map();
     private Artesia_Map art_map = new Artesia_Map();
+    private SanDiego_Map san_map = new SanDiego_Map();
     
     class GasStation {
         int x, y;
@@ -116,6 +118,7 @@ public class GoAroundi implements Runnable, KeyListener {
             
             laMapChosen = true;
             chinoMapChosen = false;
+            sanMapChosen = false;
             
             System.out.println("sdafjklhwl;arkhj");
         }
@@ -131,6 +134,27 @@ public class GoAroundi implements Runnable, KeyListener {
             temeMapChosen = false;
             pomoMapChosen = true;
             artMapChosen = false;
+            
+            pasaMapChosen = false;
+            laMapChosen = false;
+            chinoMapChosen = false;
+            sanMapChosen = false;
+            
+            System.out.println("sdafjklhwl;arkhj");
+        }
+
+        else if (ganeralChosen && car.x >= 520 && car.x <= 750 &&
+             car.y >= 620 && car.y <= 760) {
+            System.out.println(car.x + ", " + car.y);
+            car.x = (int)(((double)(car.x-500)/(double)250)*1000);
+            car.y = (int)(((double)(car.y-600)/(double)200)*760);
+            System.out.println(car.x + ", " + car.y);
+            ganeralChosen = false;
+            elaMapChosen = false;
+            temeMapChosen = false;
+            pomoMapChosen = false;
+            artMapChosen = false;
+            sanMapChosen = true;
             
             pasaMapChosen = false;
             laMapChosen = false;
@@ -154,6 +178,7 @@ public class GoAroundi implements Runnable, KeyListener {
             pasaMapChosen = true;
             laMapChosen = false;
             chinoMapChosen = false;
+            sanMapChosen = false;
             
             System.out.println("sdafjklhwl;arkhj");
         }
@@ -174,6 +199,7 @@ public class GoAroundi implements Runnable, KeyListener {
             chinoMapChosen = false;
 
             artMapChosen = false;
+            sanMapChosen = false;
             
             System.out.println("sdafjklhwl;arkhj");
         }
@@ -192,6 +218,7 @@ public class GoAroundi implements Runnable, KeyListener {
             
             laMapChosen = false;
             chinoMapChosen = false;
+            sanMapChosen = false;
 
             System.out.println("sdafjklhwl;arkhj");
         }
@@ -212,6 +239,7 @@ public class GoAroundi implements Runnable, KeyListener {
             chinoMapChosen = true;
             
             artMapChosen = false;
+            sanMapChosen = false;
 
             System.out.println("sdafjklhwl;arkhj");
         }
@@ -232,6 +260,7 @@ public class GoAroundi implements Runnable, KeyListener {
             temeMapChosen = true;
             
             artMapChosen = false;
+            sanMapChosen = false;
 
             System.out.println("sdafjklhwl;arkhj");
         }
@@ -266,6 +295,10 @@ public class GoAroundi implements Runnable, KeyListener {
                 car.x = (int)(((double)car.x/(double)1000)*250+500);
                 car.y = (int)(((double)car.y/(double)760)*200);
             }
+            else if(sanMapChosen) {
+                car.x = (int)(((double)car.x/(double)1000)*250+750);
+                car.y = (int)(((double)car.y/(double)760)*200+600);
+            }
             System.out.println(car.x + ", " + car.y);
             ganeralChosen = true;
             
@@ -277,6 +310,7 @@ public class GoAroundi implements Runnable, KeyListener {
             elaMapChosen = false;
             chinoMapChosen = false;
             artMapChosen = false;
+            sanMapChosen = false;
         }
         
         return true;
@@ -518,6 +552,10 @@ public class GoAroundi implements Runnable, KeyListener {
         else if(artMapChosen) {
             art_map.drawMap();
             drawArtLabels();
+        }
+        else if(sanMapChosen) {
+            san_map.drawMap();
+            drawSanLabels();
         }
         else {//if(temeMapChosen) {
             temecula_map.drawMap();
@@ -1117,6 +1155,10 @@ System.out.println(x + "," + y);System.out.println(x + "," + y);System.out.print
                     else if(pomoMapChosen) {
                         pomo_map.drawMap();
                         drawPomoLabels();
+                    }
+                    else if(sanMapChosen) {
+                        san_map.drawMap();
+                        drawSanLabels();
                     }
                     else {//if(temeMapChosen) {
                         temecula_map.drawMap();
@@ -4467,7 +4509,7 @@ audioClip.start();
         g.drawString("CHINO", 820, 500);
         g.drawString("LONG BEACH", 40, 700);
         g.drawString("ANAHEIM", 310, 700);
-        g.drawString("SAN PEDRO", 570, 700);
+        g.drawString("SAN DIEGO", 570, 700);
         g.drawString("TEMECULA", 780, 700);
  
         } catch(Exception e) {frame.dispose();}   
@@ -4498,6 +4540,100 @@ audioClip.start();
         g.drawString("Library", 310, 700);
         g.drawString("Park", 570, 700);
         g.drawString("Sea World", 780, 700);
+ 
+        } catch(Exception e) {frame.dispose();}   
+    }
+    
+    public boolean wentToUCSD = false;
+    public boolean wentToSeaWorld = false;
+
+    public void drawSanLabels() {
+        try {
+        Graphics g = panel.getGraphics();
+        
+        g.setColor(Color.BLUE);
+        g.fillRect(770, 420, 105, 180);
+        g.fillRect(895, 420, 105, 180);
+
+        g.setColor(Color.PINK);
+        g.fillRect(770, 620, 105, 180);
+        g.fillRect(895, 620, 105, 180);
+
+        if(!wentToUCSD && car.x >= 770 && car.x <= 960 &&
+           car.y >= 620 && car.y <= 760) {
+                        String cl = crashList.getText();
+                        
+                        wentToUCSD = true;
+
+            if(cl.equals("") || cl == null)
+                            {
+                                crashList.setText("UCSD");
+                            }
+                            else if(!cl.equals(""))
+                            {
+                                crashList.setText(cl 
+                                        + System.getProperty("line.separator")
+                                        + "UCSD");
+                            }
+            
+            fines += 10000;
+            
+            JOptionPane.showMessageDialog(null, "You went to UCSD");
+        }
+
+        if(!(car.x >= 770 && car.x <= 960 &&
+           car.y >= 620 && car.y <= 760)) {
+            wentToUCSD = false;
+        }
+
+        if(!wentToSeaWorld && car.x >= 770 && car.x <= 960 &&
+           car.y >= 420 && car.y <= 600) {
+                        String cl = crashList.getText();
+                        
+                        wentToSeaWorld = true;
+
+            if(cl.equals("") || cl == null)
+                            {
+                                crashList.setText("Sea World");
+                            }
+                            else if(!cl.equals(""))
+                            {
+                                crashList.setText(cl 
+                                        + System.getProperty("line.separator")
+                                        + "Sea World");
+                            }
+            
+            fines += 10000;
+            
+            JOptionPane.showMessageDialog(null, "You went to Sea World");
+        }
+
+        if(!(car.x >= 770 && car.x <= 960 &&
+           car.y >= 420 && car.y <= 600)) {
+            wentToSeaWorld = false;
+        }
+
+        g.setColor(Color.red);
+        
+        g.setFont(new Font("Curlz MT", Font.ITALIC, 29));
+
+        g.drawString("Market", 70, 120);
+        g.drawString("Horsetrack", 310, 120);
+        g.drawString("Indian Reservation", 610, 120);
+        g.drawString("Mini Mart", 810, 120);
+        g.drawString("Park", 310, 300);
+        g.drawString("Middle School", 570, 290);
+        g.drawString("High School", 790, 300);
+        g.drawString("Park", 820, 350);
+        g.drawString("Hospital", 40, 300);
+        g.drawString("Market", 40, 500);
+        g.drawString("Library", 310, 500);
+        g.drawString("Market", 550, 500);
+        g.drawString("Sea World", 820, 500);
+        g.drawString("Mini Market", 40, 700);
+        g.drawString("Library", 310, 700);
+        g.drawString("Park", 570, 700);
+        g.drawString("UC San Diego", 780, 700);
  
         } catch(Exception e) {frame.dispose();}   
     }
@@ -5123,6 +5259,74 @@ audioClip.start();
     }
 
     class ELA_Map {
+        Color backColor = new Color(240, 231, 201);
+        Color lane = Color.GRAY;
+        Color line = Color.WHITE;
+        
+        void drawMap() {
+            Graphics g = panel.getGraphics();
+
+            try {
+                g.setColor(Color.LIGHT_GRAY);
+
+                g.fillRect(0, 0, 1000, 800);
+
+                g.setColor(Color.GRAY);
+
+                g.fillRect(0, 0, 1000, 20);
+                g.fillRect(0, 200, 1000, 20);
+                g.fillRect(0, 400, 1000, 20);
+                g.fillRect(0, 600, 1000, 20);
+                g.fillRect(0, 740, 1000, 20);
+
+                g.fillRect(0, 0, 20, 800);
+                g.fillRect(125, 0, 20, 800);
+                g.fillRect(250, 0, 20, 800);
+                g.fillRect(375, 0, 20, 800);
+                g.fillRect(500, 0, 20, 800);
+                g.fillRect(625, 0, 20, 800);
+                g.fillRect(750, 0, 20, 800);
+                g.fillRect(875, 0, 20, 800);
+                g.fillRect(960, 0, 20, 800);
+
+                g.setColor(Color.WHITE);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(2*i, 10, 5, 1);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(2*i, 410, 5, 1);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(2*i, 750, 5, 1);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(10, 2*i, 1, 5);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(385, 2*i, 1, 5);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(510, 2*i, 1, 5);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(635, 2*i, 1, 5);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(970, 2*i, 1, 5);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(2*i, 210, 5, 1);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(2*i, 610, 5, 1);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(10, 2*i, 1, 5);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(135, 2*i, 1, 5);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(260, 2*i, 1, 5);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(760, 2*i, 1, 5);
+                for(int i=0; i<=500; i+=5)
+                    g.drawRect(885, 2*i, 1, 5);
+
+                g.dispose();
+            } catch(Exception e) {frame.dispose();}
+        }
+    }
+
+    class SanDiego_Map {
         Color backColor = new Color(240, 231, 201);
         Color lane = Color.GRAY;
         Color line = Color.WHITE;
