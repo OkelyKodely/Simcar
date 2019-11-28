@@ -4178,13 +4178,19 @@ audioClip.start();
             } catch(Exception e2) {}
         }
     }
+    
+    boolean wentToELAPark = false;
+    boolean wentToCSLA = false;
 
     public void drawELALabels() {
         try {
         Graphics g = panel.getGraphics();
         
         g.setColor(Color.black);
-        
+        g.setFont(new Font("arial", Font.PLAIN, 10));
+        g.drawString("Olivera St.", 20, 221);
+
+        g.setColor(Color.black);        
         g.setFont(new Font("Curlz MT", Font.ITALIC, 29));
 
         g.fillRect(20, 20, 105, 180);
@@ -4195,7 +4201,61 @@ audioClip.start();
         g.fillRect(645, 420, 105, 180);
         
 
-        g.setColor(Color.red);
+        if(!wentToELAPark && car.x >= 520 && car.x <= 750 &&
+           car.y >= 420 && car.y <= 600) {
+                        String cl = crashList.getText();
+                        
+                        wentToELAPark = true;
+
+            if(cl.equals("") || cl == null)
+                            {
+                                crashList.setText("Park");
+                            }
+                            else if(!cl.equals(""))
+                            {
+                                crashList.setText(cl 
+                                        + System.getProperty("line.separator")
+                                        + "Park");
+                            }
+            
+            fines += 10000;
+            
+            JOptionPane.showMessageDialog(null, "You went to park");
+        }
+        
+        if(!(car.x >= 520 && car.x <= 750 &&
+           car.y >= 420 && car.y <= 600)) {
+            wentToELAPark = false;
+        }
+
+        if(!wentToCSLA && car.x >= 20 && car.x <= 250 &&
+           car.y >= 20 && car.y <= 200) {
+                        String cl = crashList.getText();
+                        
+                        wentToCSLA = true;
+
+            if(cl.equals("") || cl == null)
+                            {
+                                crashList.setText("CSLA");
+                            }
+                            else if(!cl.equals(""))
+                            {
+                                crashList.setText(cl 
+                                        + System.getProperty("line.separator")
+                                        + "CSLA");
+                            }
+            
+            fines += 10000;
+            
+            JOptionPane.showMessageDialog(null, "You went to Cal State LA");
+        }
+        
+        if(!(car.x >= 20 && car.x <= 250 &&
+           car.y >= 20 && car.y <= 200)) {
+            wentToCSLA = false;
+        }
+
+        g.setColor(Color.white);
         
         g.drawString("CSLA.", 70, 120);
         g.drawString("LAC-USC", 310, 120);
@@ -4258,7 +4318,7 @@ audioClip.start();
             wentToArtesiaPark = false;
         }
         
-        g.setColor(Color.red);
+        g.setColor(Color.white);
         
         g.drawString("Elementary School", 70, 120);
         g.drawString("Market", 310, 120);
@@ -4297,7 +4357,7 @@ audioClip.start();
         g.fillRect(395, 220, 105, 180);
         
 
-        g.setColor(Color.red);
+        g.setColor(Color.white);
         
         g.drawString("Cal Tech", 70, 120);
         g.drawString("Middle School", 310, 120);
@@ -4341,7 +4401,7 @@ audioClip.start();
         g.fillRect(395, 220, 105, 180);
         
 
-        g.setColor(Color.red);
+        g.setColor(Color.white);
         
         g.drawString("Market", 70, 120);
         g.drawString("Middle School", 310, 120);
@@ -4373,7 +4433,7 @@ audioClip.start();
         g.fillRect(20, 20, 105, 180);
         g.fillRect(145, 20, 105, 180);
 
-        g.setColor(Color.red);
+        g.setColor(Color.white);
         
         g.setFont(new Font("Curlz MT", Font.ITALIC, 29));
 
@@ -4437,7 +4497,7 @@ audioClip.start();
         g.fillRect(770, 20, 105, 180);
         g.fillRect(895, 20, 105, 180);
 
-        g.setColor(Color.red);
+        g.setColor(Color.white);
 
         g.setFont(new Font("Curlz MT", Font.ITALIC, 29));
 
@@ -4518,12 +4578,48 @@ audioClip.start();
         } catch(Exception e) {frame.dispose();}   
     }
 
+    boolean wentToPE = false;
+    
     public void drawTemeculaLabels() {
         try {
         Graphics g = panel.getGraphics();
         
-        g.setColor(Color.red);
+        g.setColor(new Color(212, 175, 55));
+        g.fillRect(20, 420, 105, 180);
+        g.fillRect(145, 420, 105, 180);
+
+        g.setColor(Color.black);
+        g.drawString("Temecula PKWY", 20, 420);
         
+        g.setColor(Color.white);
+        
+        if(!wentToPE && car.x >= 20 && car.x <= 250 &&
+           car.y >= 420 && car.y <= 600) {
+                        String cl = crashList.getText();
+                        
+                        wentToPE = true;
+
+            if(cl.equals("") || cl == null)
+                            {
+                                crashList.setText("Pechanga");
+                            }
+                            else if(!cl.equals(""))
+                            {
+                                crashList.setText(cl 
+                                        + System.getProperty("line.separator")
+                                        + "Pechanga");
+                            }
+            
+            fines += 10000;
+            
+            JOptionPane.showMessageDialog(null, "You went to Pechanga Casion to gamble~.");
+        }
+        
+        if(!(car.x >= 20 && car.x <= 250 &&
+           car.y >= 420 && car.y <= 600)) {
+            wentToPE = false;
+        }
+
         g.setFont(new Font("Curlz MT", Font.ITALIC, 29));
 
         g.drawString("Market", 70, 120);
@@ -4616,7 +4712,7 @@ audioClip.start();
             wentToSeaWorld = false;
         }
 
-        g.setColor(Color.red);
+        g.setColor(Color.white);
         
         g.setFont(new Font("Curlz MT", Font.ITALIC, 29));
 
@@ -5078,7 +5174,7 @@ audioClip.start();
             Graphics g = panel.getGraphics();
 
             try {
-                g.setColor(Color.LIGHT_GRAY);
+                g.setColor(Color.white);
 
                 g.fillRect(0, 0, 1000, 800);
 
@@ -5134,7 +5230,7 @@ audioClip.start();
             Graphics g = panel.getGraphics();
 
             try {
-                g.setColor(Color.LIGHT_GRAY);
+                g.setColor(new Color(128,0,128));
 
                 g.fillRect(0, 0, 1000, 800);
 
@@ -5202,7 +5298,7 @@ audioClip.start();
             Graphics g = panel.getGraphics();
 
             try {
-                g.setColor(Color.LIGHT_GRAY);
+                g.setColor(new Color(128,0,128));
 
                 g.fillRect(0, 0, 1000, 800);
 
@@ -5270,7 +5366,7 @@ audioClip.start();
             Graphics g = panel.getGraphics();
 
             try {
-                g.setColor(Color.LIGHT_GRAY);
+                g.setColor(new Color(128,0,128));
 
                 g.fillRect(0, 0, 1000, 800);
 
@@ -5338,7 +5434,7 @@ audioClip.start();
             Graphics g = panel.getGraphics();
 
             try {
-                g.setColor(Color.LIGHT_GRAY);
+                g.setColor(new Color(128,0,128));
 
                 g.fillRect(0, 0, 1000, 800);
 
@@ -5406,7 +5502,7 @@ audioClip.start();
             Graphics g = panel.getGraphics();
 
             try {
-                g.setColor(Color.LIGHT_GRAY);
+                g.setColor(new Color(128,0,128));
 
                 g.fillRect(0, 0, 1000, 800);
 
@@ -5474,7 +5570,7 @@ audioClip.start();
             Graphics g = panel.getGraphics();
 
             try {
-                g.setColor(Color.LIGHT_GRAY);
+                g.setColor(new Color(128,0,128));
 
                 g.fillRect(0, 0, 1000, 800);
 
@@ -5542,7 +5638,7 @@ audioClip.start();
             Graphics g = panel.getGraphics();
 
             try {
-                g.setColor(Color.LIGHT_GRAY);
+                g.setColor(new Color(128,0,128));
 
                 g.fillRect(0, 0, 1000, 800);
 
@@ -5610,7 +5706,7 @@ audioClip.start();
             Graphics g = panel.getGraphics();
 
             try {
-                g.setColor(Color.LIGHT_GRAY);
+                g.setColor(new Color(128,0,128));
 
                 g.fillRect(0, 0, 1000, 800);
 
